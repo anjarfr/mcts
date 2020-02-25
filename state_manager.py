@@ -1,4 +1,7 @@
 class StateManager:
+    """
+    Responsible for communication between MCTS and game
+    """
     def __init__(self):
         pass
 
