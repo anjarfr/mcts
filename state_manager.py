@@ -4,3 +4,6 @@ class StateManager:
 
     def manage(self):
         pass
+
+    def show_statistics(self):
+        pass
