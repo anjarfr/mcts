@@ -1,14 +1,16 @@
 nim:
-  g: 10 # number of games in a batch
-  p: 1 # starting player option
+  g: 10 # number of games in a batch, up to 100
+  p: 1 # starting player option, 1, 2 or 3 (mixed)
   m: 0 # number of simulations (and hence rollouts) per actual game move
   n: 10 # starting number of pieces/stones in each game
   k: 10 # maximum number of pieces that either player can take on their turn (min 1)
 
 oldgold:
-  g: 10 # number of games in a batch
-  b_init: [1, 0, 1, 1, 1, 1, 1, 2, 1, 0] # initial board configuration
-  p: 1 # starting player option
+  g: 10 # number of games in a batch, up to 100
+  b_init: [1, 0, 1, 1, 1, 1, 1, 2, 1, 0] # initial board configuration, 1 ≤ L ≤ 20 and copper coins between 0 to L-1
+  p: 1 # starting player option, 1, 2 or 3 (mixed)
+  n: 10 # starting number of pieces/stones in each game, for 100 > N > K > 1
+  k: 10 # maximum number of pieces that either player can take on their turn
   m: 0 # number of simulations (and hence rollouts) per actual game move
 
-verbose: True
+verbose: True # Whether the details of moves for each game is shown
