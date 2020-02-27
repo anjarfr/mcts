@@ -8,7 +8,7 @@ class Game:
     def __init__(self):
         pass
 
-    def generate_child_state(self, state):
+    def generate_child_states(self, state):
         pass
 
     def is_finished(self):
@@ -46,8 +46,23 @@ class Nim(Game):
                 "and bigger than 1, was {], {} and {} ".format(min_remove_stones, max_remove_stones, start_stones)
             )
 
-    def get_legal_actions(self):
-        limit = min(self.remaining_stones, self.max_remove_stones)
+    def is_final_state(self, state):
+        return state == 0
+
+    def generate_child_states(self, state):
+        if self.is_final_state(state):
+            return None
+
+        child_states = []
+        actions = self.get_legal_actions(state)
+
+        for action in actions:
+            child_states.append(state - action)
+
+        return child_states
+
+    def get_legal_actions(self, state):
+        limit = min(state, self.max_remove_stones)
         actions = list(range(1, limit+1))
 
         return actions
