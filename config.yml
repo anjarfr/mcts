@@ -1,6 +1,6 @@
 nim:
-  g: 10 # number of games in a batch
-  p: 1 # starting player option
+  g: 10 # number of games in a batch, up to 100
+  p: 1 # starting player option, 1, 2 or 3 (mixed)
   m: 0 # number of simulations (and hence rollouts) per actual game move
   n: 10 # starting number of pieces/stones in each game
   k: 10 # maximum number of pieces that either player can take on their turn (min 1)
@@ -11,4 +11,4 @@ oldgold:
   p: 1 # starting player option
   m: 0 # number of simulations (and hence rollouts) per actual game move
 
-verbose: True
+verbose: True # Whether the details of moves for each game is shown
