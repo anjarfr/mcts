@@ -11,7 +11,7 @@ class Game:
     def generate_child_states(self, state):
         pass
 
-    def is_finished(self):
+    def is_finished(self, state):
         pass
 
     def print(self):
@@ -46,11 +46,8 @@ class Nim(Game):
                 "and bigger than 1, was {], {} and {} ".format(min_remove_stones, max_remove_stones, start_stones)
             )
 
-    def is_final_state(self, state):
-        return state == 0
-
     def generate_child_states(self, state):
-        if self.is_final_state(state):
+        if self.is_finished(state):
             return None
 
         child_states = []
@@ -79,7 +76,7 @@ class Nim(Game):
                     action, self.remaining_stones)
             )
 
-        if self.is_finished():
+        if self.remaining_stones == 0:
             print("Player {} wins".format(player))
             reward = 100
 
@@ -88,8 +85,8 @@ class Nim(Game):
     def is_legal_action(self, action):
         return 1 <= action <= self.max_remove_stones
 
-    def is_finished(self):
-        return self.remaining_stones == 0
+    def is_finished(self, state):
+        return state == 0
 
     def print_move(self, action, current_player):
         s = "Player {} selects {} stones: Remaining stones = {}".format(current_player, action, self.remaining_stones)
