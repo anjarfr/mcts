@@ -9,10 +9,10 @@ class Game:
     def __init__(self):
         pass
 
-    def generate_child_state(self, state):
+    def generate_child_states(self, state):
         pass
 
-    def is_finished(self):
+    def is_finished(self, state):
         pass
 
     def print(self):
@@ -20,9 +20,78 @@ class Game:
 
 
 class Nim(Game):
-    def __init__(self, cfg: object):
-        self.state = cfg["nim"]["n"]
-        self.k = cfg["nim"]["k"]
+    def __init__(self):
+        super().__init__()
+        self.games = cfg['nim']['g']
+        self.start_player = cfg['nim']['p']
+        self.simulations = cfg['nim']['m']
+
+        self.start_stones = 0
+        self.max_remove_stones = 0
+
+        self.generate_initial_state()
+        self.remaining_stones = self.start_stones  # This is the state
+
+    def generate_initial_state(self):
+        start_stones = cfg['nim']['n']
+        max_remove_stones = cfg['nim']['k']
+        min_remove_stones = 1
+
+        if min_remove_stones <= max_remove_stones < start_stones:
+            self.start_stones = start_stones
+            self.max_remove_stones = max_remove_stones
+            print("Start Pile: {} stones".format(self.start_stones))
+        else:
+            raise Exception(
+                "Maximum number of stones that can be removed needs to be less than the starting number of pieces, "
+                "and bigger than 1, was {], {} and {} ".format(min_remove_stones, max_remove_stones, start_stones)
+            )
+
+    def generate_child_states(self, state):
+        if self.is_finished(state):
+            return None
+
+        child_states = []
+        actions = self.get_legal_actions(state)
+
+        for action in actions:
+            child_states.append(state - action)
+
+        return child_states
+
+    def get_legal_actions(self, state):
+        limit = min(state, self.max_remove_stones)
+        actions = list(range(1, limit+1))
+
+        return actions
+
+    def perform_action(self, action, player):
+        reward = 0
+
+        if self.is_legal_action(action):
+            self.remaining_stones -= action
+            self.print_move(action, player)
+        else:
+            raise Exception(
+                "That is not a legal action. Tried to remove {} stones, from a pile of {}".format(
+                    action, self.remaining_stones)
+            )
+
+        if self.remaining_stones == 0:
+            print("Player {} wins".format(player))
+            reward = 100
+
+        return reward
+
+    def is_legal_action(self, action):
+        return 1 <= action <= self.max_remove_stones
+
+    def is_finished(self, state):
+        return state == 0
+
+    def print_move(self, action, current_player):
+        s = "Player {} selects {} stones: Remaining stones = {}".format(current_player, action, self.remaining_stones)
+        print(s)
 
 
 class OldGold(Game):
@@ -96,5 +165,4 @@ class OldGold(Game):
         return self.state.count(2) == 0
 
 
-og = OldGold(cfg)
-print(og.get_legal_actions())
+

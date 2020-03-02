@@ -4,3 +4,4 @@ class Node:
         self.children = []
         self.state = state
         self.actions = []
+        self.visits = 0
