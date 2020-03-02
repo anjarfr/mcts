@@ -1,4 +1,5 @@
 import yaml
+import deepcopy
 
 with open("config.yml", "r") as ymlfile:
     cfg = yaml.load(ymlfile, Loader=yaml.FullLoader)
@@ -41,6 +42,20 @@ class OldGold(Game):
             )
         return state
 
+    def generate_child_state(self, action):
+        start = action[0]
+        end = action[1]
+        child_state = deepcopy(self.state)
+
+        if start == end == 0:
+            child_state[0] = 0
+            return child_state
+
+        child_state[end] = child_state[start]
+        child_state[start] = 0
+
+        return child_state
+
     def get_legal_actions(self):
         actions = []
 
@@ -69,11 +84,12 @@ class OldGold(Game):
         if start == end == 0:
             self.state[0] = 0
             if self.is_finished():
-                reward = 100
+                reward = 1
             return reward
 
         self.state[end] = self.state[start]
         self.state[start] = 0
+
         return reward
 
     def is_finished(self):
