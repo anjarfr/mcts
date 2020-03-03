@@ -1,8 +1,5 @@
 import yaml
-import deepcopy
-
-with open("config.yml", "r") as ymlfile:
-    cfg = yaml.load(ymlfile, Loader=yaml.FullLoader)
+from copy import deepcopy
 
 
 class Game:
@@ -12,7 +9,7 @@ class Game:
     def generate_child_states(self, state):
         pass
 
-    def is_finished(self, state):
+    def game_over(self, state):
         pass
 
     def print(self):
@@ -20,11 +17,11 @@ class Game:
 
 
 class Nim(Game):
-    def __init__(self):
+    def __init__(self, cfg):
         super().__init__()
-        self.games = cfg['nim']['g']
-        self.start_player = cfg['nim']['p']
-        self.simulations = cfg['nim']['m']
+        self.games = cfg["nim"]["g"]
+        self.player = cfg["nim"]["p"]
+        self.simulations = cfg["nim"]["m"]
 
         self.start_stones = 0
         self.max_remove_stones = 0
@@ -33,8 +30,8 @@ class Nim(Game):
         self.remaining_stones = self.start_stones  # This is the state
 
     def generate_initial_state(self):
-        start_stones = cfg['nim']['n']
-        max_remove_stones = cfg['nim']['k']
+        start_stones = cfg["nim"]["n"]
+        max_remove_stones = cfg["nim"]["k"]
         min_remove_stones = 1
 
         if min_remove_stones <= max_remove_stones < start_stones:
@@ -44,7 +41,9 @@ class Nim(Game):
         else:
             raise Exception(
                 "Maximum number of stones that can be removed needs to be less than the starting number of pieces, "
-                "and bigger than 1, was {], {} and {} ".format(min_remove_stones, max_remove_stones, start_stones)
+                "and bigger than 1, was {], {} and {} ".format(
+                    min_remove_stones, max_remove_stones, start_stones
+                )
             )
 
     def generate_child_states(self, state):
@@ -61,7 +60,7 @@ class Nim(Game):
 
     def get_legal_actions(self, state):
         limit = min(state, self.max_remove_stones)
-        actions = list(range(1, limit+1))
+        actions = list(range(1, limit + 1))
 
         return actions
 
@@ -74,7 +73,8 @@ class Nim(Game):
         else:
             raise Exception(
                 "That is not a legal action. Tried to remove {} stones, from a pile of {}".format(
-                    action, self.remaining_stones)
+                    action, self.remaining_stones
+                )
             )
 
         if self.remaining_stones == 0:
@@ -86,11 +86,16 @@ class Nim(Game):
     def is_legal_action(self, action):
         return 1 <= action <= self.max_remove_stones
 
-    def is_finished(self, state):
+    def game_over(self, state):
         return state == 0
 
+    def winner(self):
+        return self.player
+
     def print_move(self, action, current_player):
-        s = "Player {} selects {} stones: Remaining stones = {}".format(current_player, action, self.remaining_stones)
+        s = "Player {} selects {} stones: Remaining stones = {}".format(
+            current_player, action, self.remaining_stones
+        )
         print(s)
 
 
@@ -100,6 +105,7 @@ class OldGold(Game):
         self.batch_size = cfg["oldgold"]["g"]
         self.player = cfg["oldgold"]["p"]
         self.simulations = cfg["oldgold"]["m"]
+        self.verbose = cfg["verbose"]
 
     def generate_initial_state(self, cfg: object):
         state = cfg["oldgold"]["b_init"]
@@ -110,20 +116,6 @@ class OldGold(Game):
                 )
             )
         return state
-
-    def generate_child_state(self, action):
-        start = action[0]
-        end = action[1]
-        child_state = deepcopy(self.state)
-
-        if start == end == 0:
-            child_state[0] = 0
-            return child_state
-
-        child_state[end] = child_state[start]
-        child_state[start] = 0
-
-        return child_state
 
     def get_legal_actions(self):
         actions = []
@@ -145,24 +137,66 @@ class OldGold(Game):
 
         return actions
 
+    def generate_child_state(self, action):
+        start = action[0]
+        end = action[1]
+        child_state = deepcopy(self.state)
+
+        if start == end == 0:
+            child_state[0] = 0
+            return child_state
+
+        child_state[end] = child_state[start]
+        child_state[start] = 0
+
+        return child_state
+
+    def change_player(self):
+        if self.player == 1:
+            self.player = 2
+        else:
+            self.player = 1
+
     def perform_action(self, action: tuple):
         start = action[0]
         end = action[1]
         reward = 0
 
+        prev_state = deepcopy(self.state)
+
         if start == end == 0:
             self.state[0] = 0
-            if self.is_finished():
+            if self.game_over():
                 reward = 1
-            return reward
+        else:
+            self.state[end] = self.state[start]
+            self.state[start] = 0
 
-        self.state[end] = self.state[start]
-        self.state[start] = 0
+        if self.verbose:
+            self.print_move(prev_state, self.player, start, end)
+
+        if not self.game_over():
+            self.change_player()
 
         return reward
 
-    def is_finished(self):
+    def game_over(self):
         return self.state.count(2) == 0
 
+    def set_position(self, state):
+        pass
 
-
+    def print_move(self, prev_state, start, end):
+        coin_type = "copper" if prev_state[start] == 1 else "gold"
+        if start == end == 0:
+            print(
+                "Player {} picks up {} coin: {}".format(
+                    self.player, coin_type, self.state
+                )
+            )
+        else:
+            print(
+                "Player {} moves {} coin from {} to {}: {}".format(
+                    self.player, coin_type, start, end, self.state
+                )
+            )

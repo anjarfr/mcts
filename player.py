@@ -2,7 +2,7 @@ from game import Nim, OldGold
 from mcts import MCTS
 
 
-class StateManager:
+class Player:
     def __init__(self, cfg):
         self.game = self.initialize_game(cfg)
         self.mcts = MCTS(cfg)
@@ -16,14 +16,16 @@ class StateManager:
         return game
     
     def play_game(self):
-        pass
         
+
+
+
 
 def main():
     with open("config.yml", "r") as ymlfile:
         cfg = yaml.load(ymlfile, Loader=yaml.FullLoader)
 
-    player = StateManager(cfg)
+    player = Player(cfg)
     player.play_game()
 
     # -- TESTING PURPOSES --
