@@ -3,17 +3,17 @@ from copy import deepcopy
 
 
 class Game:
-    def __init__(self):
-        pass
+    def change_player(self):
+        if self.player == 1:
+            self.player = 2
+        else:
+            self.player = 1
 
-    def generate_child_states(self, state):
-        pass
+    def winner(self):
+        return self.player
 
-    def game_over(self, state):
-        pass
-
-    def print(self):
-        pass
+    def set_position(self, state):
+        self.state = state
 
 
 class Nim(Game):
@@ -27,7 +27,7 @@ class Nim(Game):
         self.max_remove_stones = 0
 
         self.generate_initial_state()
-        self.remaining_stones = self.start_stones  # This is the state
+        self.state = self.start_stones  # This is the state
 
     def generate_initial_state(self):
         start_stones = cfg["nim"]["n"]
@@ -47,7 +47,7 @@ class Nim(Game):
             )
 
     def generate_child_states(self, state):
-        if self.is_finished(state):
+        if self.game_over(state):
             return None
 
         child_states = []
@@ -68,18 +68,21 @@ class Nim(Game):
         reward = 0
 
         if self.is_legal_action(action):
-            self.remaining_stones -= action
+            self.state -= action
             self.print_move(action, player)
         else:
             raise Exception(
                 "That is not a legal action. Tried to remove {} stones, from a pile of {}".format(
-                    action, self.remaining_stones
+                    action, self.state
                 )
             )
 
-        if self.remaining_stones == 0:
+        if self.state == 0:
             print("Player {} wins".format(player))
-            reward = 100
+            reward = 1 if self.player == 1 else -1
+
+        if not self.game_over():
+            self.change_player()
 
         return reward
 
@@ -89,12 +92,9 @@ class Nim(Game):
     def game_over(self, state):
         return state == 0
 
-    def winner(self):
-        return self.player
-
-    def print_move(self, action, current_player):
+    def print_move(self, action):
         s = "Player {} selects {} stones: Remaining stones = {}".format(
-            current_player, action, self.remaining_stones
+            self.player, action, self.state
         )
         print(s)
 
@@ -151,23 +151,16 @@ class OldGold(Game):
 
         return child_state
 
-    def change_player(self):
-        if self.player == 1:
-            self.player = 2
-        else:
-            self.player = 1
-
     def perform_action(self, action: tuple):
         start = action[0]
         end = action[1]
         reward = 0
-
         prev_state = deepcopy(self.state)
 
         if start == end == 0:
             self.state[0] = 0
             if self.game_over():
-                reward = 1
+                reward = 1 if self.player == 1 else -1
         else:
             self.state[end] = self.state[start]
             self.state[start] = 0
@@ -182,9 +175,6 @@ class OldGold(Game):
 
     def game_over(self):
         return self.state.count(2) == 0
-
-    def set_position(self, state):
-        pass
 
     def print_move(self, prev_state, start, end):
         coin_type = "copper" if prev_state[start] == 1 else "gold"

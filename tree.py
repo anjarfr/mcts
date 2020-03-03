@@ -14,4 +14,16 @@ class Node:
         self.actions.append(action)
         self.children.append(Node(state=new_state, parent=self))
 
+    def get_node_by_state(self, state):
+        if self.state == state:
+            return self
+        else:
+            for child in self.children:
+                return state_in_tree(child)
+        return None
+
+    def get_action_to(chosen_child):
+        for i, child in enumerate(self.children):
+            if child.state == chosen_child.state:
+                return self.actions[i]
 
