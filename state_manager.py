@@ -6,6 +6,8 @@ class StateManager:
     def __init__(self, cfg):
         self.game = self.initialize_game(cfg)
         self.mcts = MCTS(cfg)
+        self.actual_state = game.state
+        self.sim_state = None
 
     def initialize_game(self, cfg):
         game_type = cfg["game"]
@@ -16,7 +18,8 @@ class StateManager:
         return game
     
     def play_game(self):
-        pass
+        for i in range(self.game.batch_size):
+            self.mcts.uct_search()
         
 
 def main():

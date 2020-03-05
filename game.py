@@ -19,7 +19,7 @@ class Game:
 class Nim(Game):
     def __init__(self, cfg):
         super().__init__()
-        self.games = cfg["nim"]["g"]
+        self.batch_size = cfg["nim"]["g"]
         self.player = cfg["nim"]["p"]
         self.simulations = cfg["nim"]["m"]
 
@@ -117,19 +117,19 @@ class OldGold(Game):
             )
         return state
 
-    def get_legal_actions(self):
+    def get_legal_actions(self, state):
         actions = []
 
-        if self.state[0] != 0:
+        if state[0] != 0:
             actions.append((0, 0))
 
         i = 0
         j = i + 1
-        while j <= len(self.state):
-            while self.state[i] != 0:
+        while j <= len(state):
+            while state[i] != 0:
                 i += 1
                 j += 1
-            while self.state[j] == 0:
+            while state[j] == 0:
                 j += 1
             actions.extend([(j, x) for x in range(i, j)])
             i = j + 1
