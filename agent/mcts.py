@@ -1,6 +1,6 @@
-from agent.tree import Node
+from agent.node import Node
 from math import log, sqrt
-from env.game import Game
+from environment.game import Game
 from random import randint
 
 
@@ -9,11 +9,12 @@ class MCTS:
     Monte Carlo Tree Search
     """
 
-    def __init__(self, cfg, init_state):
+    def __init__(self, cfg, init_state, simulations):
         self.tree_policy = {}
         self.root = Node(state=init_state, parent=None)
-        self.q = {}
+
         self.c = cfg["mcts"]["c"]
+        self.simulations = simulations
 
     def new_node(self, s0: Node, state, action, legal: list):
         s0.insert(state, action)
@@ -60,6 +61,10 @@ class MCTS:
             t += 1
         return path
 
+    def node_expansion(self):
+        """ Generating child states and connecting them to parent"""
+        pass
+
     def default_search(self, board: Game):
         """ Random simulation until termination """
         while not board.game_over():
@@ -76,6 +81,7 @@ class MCTS:
     def leaf_evaluation(self, board: Game, s0):
         """ Perform tree policy to leaf node, and to a simualtion
         until game ends from that leaf node. Backpropagate the value """
+
         board.set_position(s0)
         path = self.tree_search(board)
         z = self.default_search(board)
@@ -98,8 +104,10 @@ class MCTS:
 
     def uct_search(self, s0):
         """ This is one move by one player in the game """
-        # Her må vi kanskje legge til m, så den kjører m antall simuleringer per trekk. for i in range(m)
-        self.leaf_evaluation(board, s0)
-        board.set_position(s0)
+
+        for i in range(self.simulations):
+            self.leaf_evaluation(board, s0)
+            board.set_position(s0)
+
         return self.select_action(board, s0, 0)
 

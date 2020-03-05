@@ -1,15 +1,20 @@
-from env.nim import Nim
-from env.old_gold import OldGold
+from environment.nim import Nim
+from environment.old_gold import OldGold
 from agent.mcts import MCTS
 import yaml
 
 
 class StateManager:
+    """
+    Request state, child states and result from game
+    """
+
     def __init__(self, cfg):
         self.game = self.initialize_game(cfg)
-        self.actual_state = self.game.state
-        self.mcts = MCTS(cfg, self.actual_state)
-        self.sim_state = None
+        self.state = self.game.state
+        self.simulations = self.game.simulations
+
+        self.mcts = MCTS(cfg, self.state, self.simulations)
 
     def initialize_game(self, cfg):
         game_type = cfg["game"]
@@ -21,7 +26,8 @@ class StateManager:
     
     def play_game(self):
         for i in range(self.game.batch_size):
-            self.mcts.uct_search()
+            self.mcts.uct_search(self.state)
+            self.state = self.mcts.select_action(self.state)
         
 
 def main():

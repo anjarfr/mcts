@@ -4,11 +4,10 @@ class Node:
         self.state = state
 
         self.children = []
-        self.actions = []
+        self.actions = None
 
         self.q = 0
         self.visits = 0
-        self.branch_visists = {}
 
     def insert(self, new_state, action):
         self.actions.append(action)
@@ -26,4 +25,7 @@ class Node:
         for i, child in enumerate(self.children):
             if child.state == chosen_child.state:
                 return self.actions[i]
+
+    def is_terminal_node(self):
+        self.state.game_over()
 
