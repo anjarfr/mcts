@@ -1,6 +1,6 @@
 from agent.tree import Node
 from math import log, sqrt
-from env.game import Game
+from games.game import Game
 from random import randint
 
 

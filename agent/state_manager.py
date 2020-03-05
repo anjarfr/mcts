@@ -1,5 +1,5 @@
-from env.nim import Nim
-from env.old_gold import OldGold
+from games.nim import Nim
+from games.old_gold import OldGold
 from agent.mcts import MCTS
 import yaml
 
