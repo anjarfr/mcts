@@ -1,5 +1,6 @@
-from game import Nim, OldGold
-from mcts import MCTS
+from env.nim import Nim
+from env.old_gold import OldGold
+from agent.mcts import MCTS
 import yaml
 
 
@@ -24,7 +25,7 @@ class StateManager:
         
 
 def main():
-    with open("config.yml", "r") as ymlfile:
+    with open("../config.yml", "r") as ymlfile:
         cfg = yaml.load(ymlfile, Loader=yaml.FullLoader)
 
     player = StateManager(cfg)
