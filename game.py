@@ -1,4 +1,3 @@
-import yaml
 from copy import deepcopy
 
 
@@ -15,10 +14,20 @@ class Game:
     def set_position(self, state):
         self.state = state
 
+    def get_legal_actions(self, state):
+        pass
+
+    def game_over(self):
+        pass
+
+    def perform_action(self, action):
+        pass
+
 
 class Nim(Game):
     def __init__(self, cfg):
         super().__init__()
+        self.cfg = cfg
         self.batch_size = cfg["nim"]["g"]
         self.player = cfg["nim"]["p"]
         self.simulations = cfg["nim"]["m"]
@@ -30,8 +39,8 @@ class Nim(Game):
         self.state = self.start_stones  # This is the state
 
     def generate_initial_state(self):
-        start_stones = cfg["nim"]["n"]
-        max_remove_stones = cfg["nim"]["k"]
+        start_stones = self.cfg["nim"]["n"]
+        max_remove_stones = self.cfg["nim"]["k"]
         min_remove_stones = 1
 
         if min_remove_stones <= max_remove_stones < start_stones:
