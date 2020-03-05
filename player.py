@@ -1,5 +1,6 @@
 from game import Nim, OldGold
 from mcts import MCTS
+import yaml
 
 
 class Player:
@@ -16,6 +17,7 @@ class Player:
         return game
     
     def play_game(self):
+        pass
         
 
 

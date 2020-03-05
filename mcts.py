@@ -33,13 +33,13 @@ class MCTS:
         if board.player == 1:
             for action in legal:
                 current = self.q[(node, action)] + self.calculate_u(node, action, c)
-                    if current > chosen:
-                        chosen = current
+                if current > chosen:
+                    chosen = current
         else:
             for action in legal:
                 current = self.q[(node, action)] - self.calculate_u(node, action, c)
-                    if current > chosen:
-                        chosen = current
+                if current > chosen:
+                    chosen = current
         return chosen
 
     def tree_search(self, board: Game):
@@ -88,7 +88,7 @@ class MCTS:
         """
         for i in range(len(path)-1):
             node = path[i]
-            action = node.get_action_to(spath[i+1])
+            action = node.get_action_to(path[i+1])
             node.visits += 1
             node.branch_visist[action] += 1
             self.q[(node, action)] = (

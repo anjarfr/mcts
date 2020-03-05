@@ -1,12 +1,12 @@
 from game import Nim, OldGold
 from mcts import MCTS
-
+import yaml
 
 class StateManager:
     def __init__(self, cfg):
         self.game = self.initialize_game(cfg)
         self.mcts = MCTS(cfg)
-        self.actual_state = game.state
+        self.actual_state = self.game.state
         self.sim_state = None
 
     def initialize_game(self, cfg):

@@ -1,6 +1,6 @@
 class Node:
-    def __init__(self, state, parent: Node):
-        self.parent = node
+    def __init__(self, state, parent):
+        self.parent = parent
         self.state = state
 
         self.children = []
@@ -19,10 +19,10 @@ class Node:
             return self
         else:
             for child in self.children:
-                return state_in_tree(child)
+                return self.get_node_by_state(child)
         return None
 
-    def get_action_to(chosen_child):
+    def get_action_to(self, chosen_child):
         for i, child in enumerate(self.children):
             if child.state == chosen_child.state:
                 return self.actions[i]
