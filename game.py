@@ -26,10 +26,10 @@ class Nim(Game):
         self.start_stones = 0
         self.max_remove_stones = 0
 
-        self.generate_initial_state()
+        self.generate_initial_state(cfg)
         self.state = self.start_stones  # This is the state
 
-    def generate_initial_state(self):
+    def generate_initial_state(self, cfg):
         start_stones = cfg["nim"]["n"]
         max_remove_stones = cfg["nim"]["k"]
         min_remove_stones = 1

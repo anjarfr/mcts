@@ -2,9 +2,11 @@ from game import Nim, OldGold
 from mcts import MCTS
 import yaml
 
+
 class StateManager:
     def __init__(self, cfg):
-        self.game = self.initialize_game(cfg)
+        self.actual_game = self.initialize_game(cfg)
+        self.sim_game = self.initialize_game(cfg)
         self.mcts = MCTS(cfg)
         self.actual_state = self.game.state
         self.sim_state = None
@@ -16,11 +18,12 @@ class StateManager:
         else:
             game = OldGold(cfg)
         return game
-    
+
     def play_game(self):
         for i in range(self.game.batch_size):
-            self.mcts.uct_search()
-        
+            while not self.actual_game.game_over():
+                self.mcts.uct_search()
+
 
 def main():
     with open("config.yml", "r") as ymlfile:
