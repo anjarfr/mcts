@@ -1,6 +1,6 @@
-from agent.node import Node
+from node import Node
 from math import log, sqrt
-from environment.game import Game
+from game import Game
 from random import randint
 
 
@@ -170,7 +170,6 @@ class MCTS:
         succ_node = self.choose_child(root)
         action = self.game.get_action(root.state, succ_node.state)
         return action
-
 
     def do_simulation(self, root_state, current_player):
         """ This is one move by one player in the game

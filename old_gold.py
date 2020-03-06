@@ -1,4 +1,4 @@
-from environment.game import Game
+from game import Game
 from copy import deepcopy
 
 

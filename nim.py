@@ -1,4 +1,4 @@
-from environment.game import Game
+from game import Game
 
 
 class Nim(Game):
