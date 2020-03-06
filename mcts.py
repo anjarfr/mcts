@@ -95,19 +95,14 @@ class MCTS:
     def expand_node(self, node):
         """ Generating child states and connecting them to parent
         Also adding them to the tree policy"""
-
         children = self.game.generate_child_states(node.state)
-
         for child in children:
             node.insert(child)
 
     def choose_child(self, node):
         """ Choose child with highest visit count"""
-
         current_node = node
-
         while len(current_node.children) != 0:
-
             self.game.change_player()
             highest_visit = 0
             highest_node = current_node.children[0]
@@ -115,55 +110,40 @@ class MCTS:
                 if child.visits > highest_visit:
                     highest_visit = child.visits
                     highest_node = child
-
             current_node = highest_node
-
         return current_node
 
     def default_search(self, sim_root: Node):
         """ Perform a rollout
         Random simulation until termination
         Return leaf node"""
-
         current_state = sim_root.state
-
         while not self.game.game_over(current_state):
-
             print("Not finished")
-
             self.game.change_player()
             child = self.default_policy(current_state)
             current_state = child
-
         print("Finihsed!")
-
         leaf_node = current_state
-
         return leaf_node
 
     def default_policy(self, state):
         """ Choose a random child state """
-
         children = self.game.generate_child_states(state)
         i = randint(0, len(children) - 1)
-
         return children[i]
 
     def leaf_evaluation(self, sim_root):
         """ Return result of terminated game by doing a default search """
         leaf_node = self.default_search(sim_root)
         result = self.game.game_result(leaf_node)
-
         return result
 
     def backpropagate(self, sim_root: Node, result: int):
-
         current_node = sim_root
-
         while current_node.parent is not None:
             current_node.increase_visits()
             current_node.q += (result - current_node.q) / current_node.visits
-
             current_node = current_node.parent
 
     def choose_action(self, root: Node):
@@ -174,21 +154,14 @@ class MCTS:
     def do_simulation(self, root_state, current_player):
         """ This is one move by one player in the game
         Return the child with highest visit count as action """
-
         """ Sets previous root as parent"""
         self.root = Node(root_state, self.root)
         self.game.set_player(current_player)
-
         for i in range(self.simulations):
-
             self.expand_node(self.root)
             self.sim_root = self.choose_child(self.root)
-
             result = self.leaf_evaluation(self.sim_root)
-
             self.backpropagate(self.sim_root, result)
-
         chosen_action = self.choose_action(self.root)
-
         return chosen_action
 
