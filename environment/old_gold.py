@@ -3,8 +3,8 @@ from copy import deepcopy
 
 
 class OldGold(Game):
-    def __init__(self, cfg: object):
-        super().__init__(cfg["oldgold"])
+    def __init__(self, cfg: object, verbose):
+        super().__init__(cfg["oldgold"], verbose)
         self.state = self.generate_initial_state(cfg)
         self.batch_size = cfg["oldgold"]["g"]
         self.player = cfg["oldgold"]["p"]

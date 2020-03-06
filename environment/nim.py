@@ -2,8 +2,8 @@ from environment.game import Game
 
 
 class Nim(Game):
-    def __init__(self, cfg):
-        super().__init__(cfg["nim"])
+    def __init__(self, cfg, verbose):
+        super().__init__(cfg["nim"], verbose)
         self.cfg = cfg
         self.batch_size = cfg["nim"]["g"]
         self.simulations = cfg["nim"]["m"]
@@ -22,7 +22,8 @@ class Nim(Game):
         if min_remove_stones <= max_remove_stones < start_stones:
             self.start_stones = start_stones
             self.max_remove_stones = max_remove_stones
-            print("Start Pile: {} stones".format(self.start_stones))
+            if self.verbose:
+                print("Start Pile: {} stones".format(self.start_stones))
         else:
             raise Exception(
                 "Maximum number of stones that can be removed needs to be less than the starting number of pieces, "
@@ -43,6 +44,9 @@ class Nim(Game):
 
         return child_states
 
+    def get_action(self, start_state, end_state):
+        return start_state - end_state
+
     def get_legal_actions(self, state):
         limit = min(state, self.max_remove_stones)
         actions = list(range(1, limit + 1))
@@ -52,7 +56,8 @@ class Nim(Game):
     def perform_action(self, state, action):
         if self.is_legal_action(action):
             self.state -= action
-            self.print_move(action, self.player)
+            if self.verbose:
+                self.print_move(action, self.player)
         else:
             raise Exception(
                 "That is not a legal action. Tried to remove {} stones, from a pile of {}".format(
@@ -63,15 +68,14 @@ class Nim(Game):
         if not self.game_over(self.state):
             self.change_player()
 
-        reward = self.game_result(state)
-
-        return reward
+        return self.state
 
     def game_result(self, state):
         reward = None
 
         if state == 0:
-            print("Player {} wins".format(self.player))
+            if self.verbose:
+                print("Player {} wins".format(self.player))
             reward = 1 if self.player == 1 else -1
 
         return reward

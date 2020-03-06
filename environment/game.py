@@ -6,10 +6,11 @@ class Game:
     Interface for the two games, including common methods
     """
 
-    def __init__(self, cfg):
+    def __init__(self, cfg, verbose):
         self.player = cfg["p"]
         self.set_initial_player()
         self.state = 0
+        self.verbose = verbose
 
     def set_initial_player(self):
         if self.player == 3:
@@ -18,6 +19,9 @@ class Game:
             raise Exception(
                 "That is not a valid start player, please choose 1, 2 or 3. You chose {}".format(self.player)
             )
+
+    def set_player(self, player):
+        self.player = player
 
     def change_player(self):
         if self.player == 1:

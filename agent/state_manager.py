@@ -10,25 +10,41 @@ class StateManager:
     """
 
     def __init__(self, cfg):
-        self.game = self.initialize_game(cfg)
-        self.state = self.game.state
+        self.game = self.initialize_game(cfg, True)
+        self.sim_game = self.initialize_game(cfg, False)
+        self.initial_state = self.game.state
+        self.state = self.initial_state
         self.simulations = self.game.simulations
 
-        self.mcts = MCTS(cfg, self.state, self.simulations)
+        self.mcts = MCTS(cfg, self.sim_game, self.state, self.simulations)
 
-    def initialize_game(self, cfg):
+    def initialize_game(self, cfg, verbose):
         game_type = cfg["game"]
         if game_type == "nim":
-            game = Nim(cfg)
+            game = Nim(cfg, verbose)
         else:
-            game = OldGold(cfg)
+            game = OldGold(cfg, verbose)
         return game
     
     def play_game(self):
+
+        """ For each batch (= episode (?)) """
         for i in range(self.game.batch_size):
-            self.mcts.uct_search(self.state)
-            self.state = self.mcts.select_action(self.state)
-        
+
+            print("New game")
+            self.state = self.initial_state
+
+            print(self.state)
+
+            """ Play game until termination """
+            while not self.game.game_over(self.state):
+
+                """ Do simulations and perform one move """
+                action = self.mcts.do_simulation(self.state, self.game.player)
+                self.state = self.game.perform_action(self.state, action)
+
+            self.mcts.reset(self.state, self.sim_game)
+
 
 def main():
     with open("../config.yml", "r") as ymlfile:
@@ -36,11 +52,6 @@ def main():
 
     player = StateManager(cfg)
     player.play_game()
-
-    # -- TESTING PURPOSES --
-    og = OldGold(cfg)
-    legal = og.get_legal_actions()
-    og.perform_action(legal[0])
 
 
 if __name__ == "__main__":

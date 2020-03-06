@@ -4,14 +4,16 @@ class Node:
         self.state = state
 
         self.children = []
-        self.actions = None
 
         self.q = 0
         self.visits = 0
 
-    def insert(self, new_state, action):
-        self.actions.append(action)
-        self.children.append(Node(state=new_state, parent=self))
+    def insert(self, new_state):
+        child = Node(state=new_state, parent=self)
+
+        if child not in self.children:
+            self.children.append(child)
+
 
     def get_node_by_state(self, state):
         if self.state == state:
@@ -28,4 +30,7 @@ class Node:
 
     def is_terminal_node(self):
         self.state.game_over()
+
+    def increase_visits(self):
+        self.visits += 1
 
