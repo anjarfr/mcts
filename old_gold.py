@@ -36,19 +36,23 @@ class OldGold(Game):
 
         return actions
 
-    def generate_child_state(self, action):
-        start = action[0]
-        end = action[1]
-        child_state = deepcopy(self.state)
+    def generate_child_states(self, state):
+        actions = self.get_legal_actions(state)
+        child_states = []
 
-        if start == end == 0:
-            child_state[0] = 0
-            return child_state
+        for action in actions:
+            start = action[0]
+            end = action[1]
+            child_state = deepcopy(self.state)
 
-        child_state[end] = child_state[start]
-        child_state[start] = 0
+            if start == end == 0:
+                child_state[0] = 0
+            else:
+                child_state[end] = child_state[start]
+                child_state[start] = 0
+            child_states.append((child_state, action))
 
-        return child_state
+        return child_states
 
     def perform_action(self, state, action: tuple, player: int):
         start = action[0]
@@ -66,9 +70,6 @@ class OldGold(Game):
 
         if self.verbose:
             self.print_move(prev_state, self.player, start, end)
-
-        if not self.game_over():
-            self.change_player()
 
         return reward
 

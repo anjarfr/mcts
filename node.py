@@ -1,13 +1,14 @@
 class Node:
-    def __init__(self, state, parent):
+    def __init__(self, state, parent, action):
         self.parent = parent
         self.state = state
+        self.action = action
         self.children = []
         self.q = 0
         self.visits = 0
 
-    def insert(self, new_state):
-        child = Node(state=new_state, parent=self)
+    def insert(self, new_state, action):
+        child = Node(state=new_state, parent=self, action=action)
 
         if child not in self.children:
             self.children.append(child)

@@ -33,7 +33,7 @@ class Nim(Game):
         actions = self.get_legal_actions(state)
 
         for action in actions:
-            child_states.append(state - action)
+            child_states.append((state - action, action))
 
         return child_states
 

@@ -13,8 +13,9 @@ class MCTS:
         self.cfg = cfg
         self.game = sim_game
         self.root = Node(state=init_state, parent=None)
+        self.sim_player = None
+        
         self.simulations = simulations
-
         self.sim_root = self.root
         self.c = cfg["mcts"]["c"]
 
@@ -22,12 +23,13 @@ class MCTS:
         """ This is one move by one player in the game
         Return the child with highest visit count as action """
         """ Sets previous root as parent"""
-        self.root = Node(root_state, self.root)
-        self.game.set_player(current_player)
+        
+        self.sim_player = current_player
         for i in range(self.simulations):
             self.expand_node(self.root)
             self.sim_root = self.choose_child(self.root)
             result = self.leaf_evaluation(self.sim_root)
             self.backpropagate(self.sim_root, result)
-        chosen_action = self.choose_action(self.root)
-        return chosen_action
+        the_chosen_one = self.select_move(self.root)
+        # Sett ny root til den action som ble valgt
+        return the_chosen_one.action

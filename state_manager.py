@@ -12,14 +12,15 @@ class StateManager:
 
     def __init__(self, cfg):
         self.game = self.initialize_game(cfg, True)
-        # self.sim_game = self.initialize_game(cfg, False)
         self.initial_state = self.game.generate_initial_state(cfg)
         self.state = self.initial_state
-        self.simulations = self.game.simulations
+
+        self.batch_size = cfg["game"]["g"]
         self.player = cfg["game"]["p"]
+        self.simulations = cfg["game"]["m"]
         self.set_initial_player()
 
-        self.mcts = MCTS(cfg, self.sim_game, self.state, self.simulations)
+        self.mcts = MCTS(cfg, self.game, self.state, self.simulations, self.player)
 
     def initialize_game(self, cfg, verbose):
         game_type = cfg["game"]["type"]
@@ -53,13 +54,11 @@ class StateManager:
 
     def play_game(self):
 
-        """ For each batch (= episode (?)) """
+        """ For each episode in batch"""
         for i in range(self.game.batch_size):
 
             print("New game")
             self.state = self.initial_state
-
-            print(self.state)
 
             """ Play game until termination """
             while not self.game.game_over(self.state):
