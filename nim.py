@@ -2,25 +2,17 @@ from game import Game
 
 
 class Nim(Game):
-    def __init__(self, cfg, verbose):
-        super().__init__(cfg["nim"], verbose)
-        self.cfg = cfg
-        self.batch_size = cfg["nim"]["g"]
-        self.simulations = cfg["nim"]["m"]
+    def __init__(self, cfg):
+        super().__init__(cfg)
+        self.max_remove_stones = 1
 
-        self.start_stones = 0
-        self.max_remove_stones = 0
-
-        self.generate_initial_state()
-        self.state = self.start_stones
-
-    def generate_initial_state(self):
+    def generate_initial_state(self, cfg):
         start_stones = self.cfg["nim"]["n"]
         max_remove_stones = self.cfg["nim"]["k"]
         min_remove_stones = 1
 
         if min_remove_stones <= max_remove_stones < start_stones:
-            self.start_stones = start_stones
+            state = start_stones
             self.max_remove_stones = max_remove_stones
             if self.verbose:
                 print("Start Pile: {} stones".format(self.start_stones))
@@ -31,6 +23,7 @@ class Nim(Game):
                     min_remove_stones, max_remove_stones, start_stones
                 )
             )
+        return state
 
     def generate_child_states(self, state):
         if self.game_over(state):
@@ -53,7 +46,7 @@ class Nim(Game):
 
         return actions
 
-    def perform_action(self, state, action):
+    def perform_action(self, state, action, player: int):
         if self.is_legal_action(action):
             self.state -= action
             if self.verbose:

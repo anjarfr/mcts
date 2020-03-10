@@ -6,31 +6,8 @@ class Game:
     Interface for the two games, including common methods
     """
 
-    def __init__(self, cfg, verbose):
-        self.player = cfg["p"]
-        self.set_initial_player()
-        self.state = 0
-        self.verbose = verbose
-
-    def set_initial_player(self):
-        if self.player == 3:
-            self.player = randint(1, 2)
-        if self.player not in [1, 2, 3]:
-            raise Exception(
-                "That is not a valid start player, please choose 1, 2 or 3. You chose {}".format(self.player)
-            )
-
-    def set_player(self, player):
-        self.player = player
-
-    def change_player(self):
-        if self.player == 1:
-            self.player = 2
-        else:
-            self.player = 1
-
-    def winner(self):
-        return self.player
+    def __init__(self, cfg):
+        self.verbose = cfg["verbose"]
 
     def set_position(self, state):
         self.state = state
@@ -54,7 +31,7 @@ class Game:
         """
         pass
 
-    def perform_action(self, state, action):
+    def perform_action(self, state, action, player):
         """
         :return: new game state
         """
@@ -71,6 +48,4 @@ class Game:
         :return: List containing all child states of given state
         """
         pass
-
-
 

@@ -2,9 +2,7 @@ class Node:
     def __init__(self, state, parent):
         self.parent = parent
         self.state = state
-
         self.children = []
-
         self.q = 0
         self.visits = 0
 
@@ -13,7 +11,6 @@ class Node:
 
         if child not in self.children:
             self.children.append(child)
-
 
     def get_node_by_state(self, state):
         if self.state == state:

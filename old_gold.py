@@ -3,13 +3,8 @@ from copy import deepcopy
 
 
 class OldGold(Game):
-    def __init__(self, cfg: object, verbose):
-        super().__init__(cfg["oldgold"], verbose)
-        self.state = self.generate_initial_state(cfg)
-        self.batch_size = cfg["oldgold"]["g"]
-        self.player = cfg["oldgold"]["p"]
-        self.simulations = cfg["oldgold"]["m"]
-        self.verbose = cfg["verbose"]
+    def __init__(self, cfg: object):
+        super().__init__(cfg)
 
     def generate_initial_state(self, cfg: object):
         state = cfg["oldgold"]["b_init"]
@@ -55,7 +50,7 @@ class OldGold(Game):
 
         return child_state
 
-    def perform_action(self, action: tuple):
+    def perform_action(self, state, action: tuple, player: int):
         start = action[0]
         end = action[1]
         reward = 0
