@@ -11,20 +11,21 @@ class StateManager:
     """
 
     def __init__(self, cfg):
-        self.game = self.initialize_game(cfg)
+        self.game = self.initialize_game(cfg, verbose=True)
         self.initial_state = self.game.generate_initial_state(cfg)
-        self.sim_game = deepcopy(self.game)
+        self.sim_game = self.initialize_game(cfg, verbose=False)
+        self.sim_game.generate_initial_state(cfg)
         self.state = self.initial_state
         self.batch_size = cfg["game"]["g"]
         self.simulations = cfg["game"]["m"]
         self.mcts = MCTS(cfg, self.sim_game, self.state, self.simulations)
 
-    def initialize_game(self, cfg):
+    def initialize_game(self, cfg, verbose):
         game_type = cfg["game"]["type"]
         if game_type == "nim":
-            game = Nim(cfg)
+            game = Nim(cfg, verbose)
         else:
-            game = OldGold(cfg)
+            game = OldGold(cfg, verbose)
         return game
 
     def play_game(self):
@@ -34,6 +35,7 @@ class StateManager:
                 # Do simulations and perform one move
                 action = self.mcts.uct_search(self.state, self.game.player)
                 self.state = self.game.perform_action(self.state, action)
+                print("Real game move")
             self.mcts.reset(self.state, self.sim_game)
             self.state = self.initial_state
             self.game.player = self.game.initial_player

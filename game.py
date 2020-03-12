@@ -6,8 +6,8 @@ class Game:
     Interface for the two games, including common methods
     """
 
-    def __init__(self, cfg):
-        self.verbose = cfg["verbose"]
+    def __init__(self, cfg, verbose):
+        self.verbose = verbose
         self.initial_player = self.set_initial_player(cfg)
         self.player = self.initial_player
 
@@ -35,7 +35,7 @@ class Game:
     def winner(self):
         return self.player
 
-    def generate_initial_state(self):
+    def generate_initial_state(self, cfg):
         """
         :return: state of the initial game, as stated in configuration file
         """
@@ -54,7 +54,7 @@ class Game:
         """
         pass
 
-    def perform_action(self, state, action, player):
+    def perform_action(self, state, action):
         """
         :return: new game state
         """

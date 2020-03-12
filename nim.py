@@ -2,8 +2,8 @@ from game import Game
 
 
 class Nim(Game):
-    def __init__(self, cfg):
-        super().__init__(cfg)
+    def __init__(self, cfg, verbose):
+        super().__init__(cfg, verbose)
 
     def generate_initial_state(self, cfg):
         start_stones = cfg["nim"]["n"]

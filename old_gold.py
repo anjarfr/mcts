@@ -3,8 +3,8 @@ from copy import deepcopy
 
 
 class OldGold(Game):
-    def __init__(self, cfg: object):
-        super().__init__(cfg)
+    def __init__(self, cfg: object, verbose):
+        super().__init__(cfg, verbose)
 
     def generate_initial_state(self, cfg: object):
         state = cfg["oldgold"]["b_init"]
