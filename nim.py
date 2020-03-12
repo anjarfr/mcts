@@ -7,15 +7,15 @@ class Nim(Game):
         self.max_remove_stones = 1
 
     def generate_initial_state(self, cfg):
-        start_stones = self.cfg["nim"]["n"]
-        max_remove_stones = self.cfg["nim"]["k"]
+        start_stones = cfg["nim"]["n"]
+        max_remove_stones = cfg["nim"]["k"]
         min_remove_stones = 1
 
         if min_remove_stones <= max_remove_stones < start_stones:
             state = start_stones
             self.max_remove_stones = max_remove_stones
             if self.verbose:
-                print("Start Pile: {} stones".format(self.start_stones))
+                print("Start Pile: {} stones".format(start_stones))
         else:
             raise Exception(
                 "Maximum number of stones that can be removed needs to be less than the starting number of pieces, "
@@ -47,6 +47,8 @@ class Nim(Game):
             state -= action
             if self.verbose:
                 self.print_move(state, action, player)
+            if not self.game_over(state):
+                self.change_player()
         else:
             raise Exception(
                 "That is not a legal action. Tried to remove {} stones, from a pile of {}".format(

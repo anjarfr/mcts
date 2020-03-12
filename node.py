@@ -27,6 +27,7 @@ class Node:
     def insert(self, new_state, action):
         child = Node(state=new_state, parent=self, action=action)
         self.children.append(child)
+        self.actions.append(action)
 
     def get_node_by_state(self, state):
         if self.state == state:
@@ -36,8 +37,13 @@ class Node:
                 return self.get_node_by_state(child)
         return None
 
+    def get_child_by_state(self, state):
+        for child in self.children:
+            if child.state == state:
+                return child
+        return None
+
     def get_action_to(self, chosen_child):
         for i, child in enumerate(self.children):
             if child.state == chosen_child.state:
                 return self.actions[i]
-

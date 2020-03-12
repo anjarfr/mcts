@@ -52,7 +52,7 @@ class OldGold(Game):
             child_states.append((child_state, action))
         return child_states
 
-    def perform_action(self, state, action: tuple, player: int):
+    def perform_action(self, state, action: tuple):
         """ Edit state based on chosen action and return resulting state """
         start = action[0]
         end = action[1]
@@ -63,22 +63,26 @@ class OldGold(Game):
             state[end] = state[start]
             state[start] = 0
         if self.verbose:
-            self.print_move(prev_state, state, player, start, end)
+            self.print_move(prev_state, state, self.player, start, end)
+        if not self.game_over(state):
+            self.change_player()
         return state
 
-    def game_result(self, state, player):
-        return 1 if player == 1 else -1
+    def game_result(self, state):
+        return 1 if self.player == 1 else -1
 
     def game_over(self, state):
         return state.count(2) == 0
 
-    def print_move(self, prev_state, state, player, start, end):
+    def print_move(self, prev_state, state, start, end):
         coin_type = "copper" if prev_state[start] == 1 else "gold"
         if start == end == 0:
-            print("Player {} picks up {} coin: {}".format(player, coin_type, state))
+            print(
+                "Player {} picks up {} coin: {}".format(self.player, coin_type, state)
+            )
         else:
             print(
                 "Player {} moves {} coin from {} to {}: {}".format(
-                    player, coin_type, start, end, state
+                    self.player, coin_type, start, end, state
                 )
             )
