@@ -18,10 +18,8 @@ class OldGold(Game):
 
     def get_legal_actions(self, state):
         actions = []
-
         if state[0] != 0:
             actions.append((0, 0))
-
         i = 0
         j = i + 1
         while j <= len(state):
@@ -33,60 +31,54 @@ class OldGold(Game):
             actions.extend([(j, x) for x in range(i, j)])
             i = j + 1
             j = i + 1
-
         return actions
 
     def generate_child_states(self, state):
+        """ Find all child states of a state based on legal actions from state.
+        Returns list of tuples, [(child state, action to child state)]"""
+        if self.game_over(state):
+            return None
         actions = self.get_legal_actions(state)
         child_states = []
-
         for action in actions:
             start = action[0]
             end = action[1]
             child_state = deepcopy(self.state)
-
             if start == end == 0:
                 child_state[0] = 0
             else:
                 child_state[end] = child_state[start]
                 child_state[start] = 0
             child_states.append((child_state, action))
-
         return child_states
 
     def perform_action(self, state, action: tuple, player: int):
+        """ Edit state based on chosen action and return resulting state """
         start = action[0]
         end = action[1]
-        reward = 0
-        prev_state = deepcopy(self.state)
-
+        prev_state = deepcopy(state)
         if start == end == 0:
-            self.state[0] = 0
-            if self.game_over():
-                reward = 1 if self.player == 1 else -1
+            state[0] = 0
         else:
-            self.state[end] = self.state[start]
-            self.state[start] = 0
-
+            state[end] = state[start]
+            state[start] = 0
         if self.verbose:
-            self.print_move(prev_state, self.player, start, end)
+            self.print_move(prev_state, state, player, start, end)
+        return state
 
-        return reward
+    def game_result(self, state, player):
+        return 1 if player == 1 else -1
 
-    def game_over(self):
-        return self.state.count(2) == 0
+    def game_over(self, state):
+        return state.count(2) == 0
 
-    def print_move(self, prev_state, start, end):
+    def print_move(self, prev_state, state, player, start, end):
         coin_type = "copper" if prev_state[start] == 1 else "gold"
         if start == end == 0:
-            print(
-                "Player {} picks up {} coin: {}".format(
-                    self.player, coin_type, self.state
-                )
-            )
+            print("Player {} picks up {} coin: {}".format(player, coin_type, state))
         else:
             print(
                 "Player {} moves {} coin from {} to {}: {}".format(
-                    self.player, coin_type, start, end, self.state
+                    player, coin_type, start, end, state
                 )
             )

@@ -14,13 +14,13 @@ class Game:
 
     def generate_initial_state(self):
         """
-        :return: state of the initial game
+        :return: state of the initial game, as stated in configuration file
         """
         pass
 
     def get_legal_actions(self, state):
         """
-        :param state:
+        :param state: current state
         :return: list of legal actions from given state
         """
         pass
@@ -48,4 +48,5 @@ class Game:
         :return: List containing all child states of given state
         """
         pass
+    
 

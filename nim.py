@@ -28,13 +28,10 @@ class Nim(Game):
     def generate_child_states(self, state):
         if self.game_over(state):
             return None
-
         child_states = []
         actions = self.get_legal_actions(state)
-
         for action in actions:
             child_states.append((state - action, action))
-
         return child_states
 
     def get_action(self, start_state, end_state):
@@ -43,34 +40,27 @@ class Nim(Game):
     def get_legal_actions(self, state):
         limit = min(state, self.max_remove_stones)
         actions = list(range(1, limit + 1))
-
         return actions
 
     def perform_action(self, state, action, player: int):
         if self.is_legal_action(action):
-            self.state -= action
+            state -= action
             if self.verbose:
-                self.print_move(action, self.player)
+                self.print_move(state, action, player)
         else:
             raise Exception(
                 "That is not a legal action. Tried to remove {} stones, from a pile of {}".format(
-                    action, self.state
+                    action, state
                 )
             )
+        return state
 
-        if not self.game_over(self.state):
-            self.change_player()
-
-        return self.state
-
-    def game_result(self, state):
-        reward = None
-
+    def game_result(self, state, player):
+        reward = 0
         if state == 0:
             if self.verbose:
                 print("Player {} wins".format(self.player))
-            reward = 1 if self.player == 1 else -1
-
+            reward = 1 if player == 1 else -1
         return reward
 
     def is_legal_action(self, action):
@@ -79,8 +69,9 @@ class Nim(Game):
     def game_over(self, state):
         return state == 0
 
-    def print_move(self, action, player):
-        s = "Player {} selects {} stones: Remaining stones = {}".format(
-            player, action, self.state
+    def print_move(self, state, action, player):
+        print(
+            "Player {} selects {} stones: Remaining stones = {}".format(
+                player, action, state
+            )
         )
-        print(s)

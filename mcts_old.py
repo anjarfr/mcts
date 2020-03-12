@@ -15,7 +15,7 @@ class MCTS:
         self.root = Node(state=init_state, parent=None)
         self.simulations = simulations
 
-        self.sim_root = self.root
+        self.sim_root = self.root.sta
         self.c = cfg["mcts"]["c"]
 
     # def new_node(self, s0: Node, state, action, legal: list):
@@ -30,8 +30,8 @@ class MCTS:
 
     def calculate_u(self, node: Node, action, c: int):
         return c * sqrt(log(node.visits) / (1 + node.branch_visist[action]))
-    
-    def select_action(self, board: Game, node: Node, c: int):
+
+    def select_move(self, board: Game, node: Node, c: int):
         legal = board.get_legal_actions()
         chosen = self.target_policy[(node, legal[0])]
         if board.player == 1:
@@ -45,24 +45,24 @@ class MCTS:
                 if current > chosen:
                     chosen = current
         return chosen
-    
-    # def tree_search(self, board: Game):
-    #     c = self.c
-    #     t = 0
-    #     a = None
-    #     path = []
-    #     while not board.game_over(self.root):
-    #         s = board.state
-    #         node = self.root.get_node_by_state(s)
-    #         path.append(node)
-    #         if node is None:
-    #             legal = board.get_legal_actions()
-    #             self.new_node(s, a, legal)
-    #             return path
-    #         a = self.select_action(board, s, c)
-    #         board.perform_action(a)
-    #         t += 1
-    #     return path
+
+    def tree_search(self, board: Game):
+        c = self.c
+        t = 0
+        a = None
+        path = []
+        while not board.game_over(self.root):
+            s = board.state
+            node = self.root.get_node_by_state(s)
+            if node is None:
+                legal = board.get_legal_actions()
+                self.new_node(s, a, legal)
+                return path
+            path.append(node)
+            a = self.select_action(board, s, c)
+            board.perform_action(a)
+            t += 1
+        return path
 
     # def leaf_evaluation(self, board: Game, s0):
     #     """ Perform tree policy to leaf node, and to a simualtion
@@ -78,9 +78,9 @@ class MCTS:
         Update Q values in the path taken based on reward, z
         Also update the number of visits for nodes and branches in the path
         """
-        for i in range(len(path)-1):
+        for i in range(len(path) - 1):
             node = path[i]
-            action = node.get_action_to(path[i+1])
+            action = node.get_action_to(path[i + 1])
             node.visits += 1
             node.branch_visist[action] += 1
             self.q[(node, action)] = (
@@ -117,14 +117,12 @@ class MCTS:
     def default_search(self, sim_root: Node):
         """ Perform a rollout
         Random simulation until termination
-        Return leaf node"""
+        Return leaf node, z """
         current_state = sim_root.state
         while not self.game.game_over(current_state):
-            print("Not finished")
             self.game.change_player()
             child = self.default_policy(current_state)
             current_state = child
-        print("Finihsed!")
         leaf_node = current_state
         return leaf_node
 

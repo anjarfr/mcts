@@ -56,13 +56,11 @@ class StateManager:
 
         """ For each episode in batch"""
         for i in range(self.game.batch_size):
-
-            print("New game")
             self.state = self.initial_state
 
             """ Play game until termination """
             while not self.game.game_over(self.state):
-
+                
                 """ Do simulations and perform one move """
                 action = self.mcts.do_simulation(self.state, self.player)
                 self.state = self.game.perform_action(self.state, action)
