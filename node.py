@@ -21,11 +21,16 @@ class Node:
         self.children = []
         self.actions = []
         self.q = {}
-        self.visits = 0
+        self.visits = 1
         self.branch_visits = {}
 
-    def insert(self, new_state, action):
+    def insert(self, new_state, action, legal_actions):
         child = Node(state=new_state, parent=self, action=action)
+        child.actions = legal_actions
+        for action in legal_actions:
+            child.q[action] = 0
+            child.branch_visits[action] = 0
+        
         self.children.append(child)
         self.actions.append(action)
 

@@ -2,6 +2,7 @@ from nim import Nim
 from old_gold import OldGold
 from mcts import MCTS
 import yaml
+from copy import deepcopy
 
 
 class StateManager:
@@ -11,8 +12,8 @@ class StateManager:
 
     def __init__(self, cfg):
         self.game = self.initialize_game(cfg)
-        self.sim_game = self.initialize_game(cfg)
         self.initial_state = self.game.generate_initial_state(cfg)
+        self.sim_game = deepcopy(self.game)
         self.state = self.initial_state
         self.batch_size = cfg["game"]["g"]
         self.simulations = cfg["game"]["m"]

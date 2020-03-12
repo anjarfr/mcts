@@ -1,6 +1,5 @@
 from node import Node
 from math import log, sqrt
-from game import Game
 from random import randint
 
 
@@ -12,10 +11,19 @@ class MCTS:
     def __init__(self, cfg, game, init_state, simulations):
         self.cfg = cfg
         self.game = game
-        self.root = Node(state=init_state, parent=None, action=None)
+        self.root = self.create_root_node(init_state)
         self.current_node = self.root
         self.simulations = simulations
         self.c = cfg["mcts"]["c"]
+        self.expand_node(self.root)
+
+    def create_root_node(self, init_state):
+        node = Node(state=init_state, parent=None, action=None)
+        legal_actions = self.game.get_legal_actions(init_state)
+        for action in legal_actions:
+            node.q[action] = 0
+            node.branch_visits[action] = 0
+        return node
 
     def uct_search(self, state, player):
         """ This is one move by one player in the game
@@ -34,13 +42,13 @@ class MCTS:
         self.backpropagate(path, z)
 
     def u(self, node: Node, action, c: int):
-        return c * sqrt(log(node.visits) / (1 + node.branch_visist[action]))
+        return c * sqrt(log(node.visits) / (1 + node.branch_visits[action]))
 
     def select_move(self, node: Node, c: int):
         # Returns the Node with the best Q + u value
         legal = node.actions
         chosen = node.children[0]
-        value = self.calculate_value(node=node, action=legal[0], c=c)
+        value = node.q[legal[0]] + self.u(node, legal[0], c)
         if self.game.player == 1:
             for i, action in enumerate(legal):
                 current = node.q[action] + self.u(node, action, c)
@@ -59,11 +67,11 @@ class MCTS:
         path = []
         while not self.game.game_over(state):
             node = self.current_node.get_node_by_state(state)
-            if node is None:
+            if not len(node.children):
                 self.expand_node(self.current_node)
                 return path
             self.current_node = self.select_move(node, self.c)
-            path.append[self.current_node]
+            path.append(self.current_node)
             state = self.current_node.state
             if not self.game.game_over(state):
                 self.game.change_player()
@@ -74,7 +82,8 @@ class MCTS:
         for sap in child_states:
             state = sap[0]
             action = sap[1]
-            self.current_node.insert(state, action)
+            legal_actions = self.game.get_legal_actions(state)
+            node.insert(state, action, legal_actions)
 
     def sim_default(self):  # aka leaf evaluation
         """ Perform a rollout
@@ -82,7 +91,7 @@ class MCTS:
         Return leaf node, z """
         current_state = self.current_node.state
         while not self.game.game_over(current_state):
-            child = self.default_policy()
+            child = self.default_policy(self.current_node)
             current_state = child.state
             self.game.change_player()
         z = self.game.game_result(current_state)
@@ -90,9 +99,9 @@ class MCTS:
 
     def default_policy(self, node: Node):
         """ Choose a random child state """
-        children = self.game.generate_child_states(node)
+        children = self.game.generate_child_states(node.state)
         i = randint(0, len(children) - 1)
-        return children[i]
+        return node.get_child_by_state(children[i][0])
 
     def backpropagate(self, path: list, z: int):
         """

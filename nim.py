@@ -4,7 +4,6 @@ from game import Game
 class Nim(Game):
     def __init__(self, cfg):
         super().__init__(cfg)
-        self.max_remove_stones = 1
 
     def generate_initial_state(self, cfg):
         start_stones = cfg["nim"]["n"]
@@ -14,6 +13,7 @@ class Nim(Game):
         if min_remove_stones <= max_remove_stones < start_stones:
             state = start_stones
             self.max_remove_stones = max_remove_stones
+            self.min_remove_stones = min_remove_stones
             if self.verbose:
                 print("Start Pile: {} stones".format(start_stones))
         else:
