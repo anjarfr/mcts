@@ -1,14 +1,14 @@
-from game import Nim, OldGold
-from mcts import MCTS
+from games.nim import Nim
+from games.old_gold import OldGold
+from agent.mcts import MCTS
 import yaml
 
 
 class StateManager:
     def __init__(self, cfg):
-        self.actual_game = self.initialize_game(cfg)
-        self.sim_game = self.initialize_game(cfg)
-        self.mcts = MCTS(cfg)
+        self.game = self.initialize_game(cfg)
         self.actual_state = self.game.state
+        self.mcts = MCTS(cfg, self.actual_state)
         self.sim_state = None
 
     def initialize_game(self, cfg):
@@ -26,7 +26,7 @@ class StateManager:
 
 
 def main():
-    with open("config.yml", "r") as ymlfile:
+    with open("../config.yml", "r") as ymlfile:
         cfg = yaml.load(ymlfile, Loader=yaml.FullLoader)
 
     player = StateManager(cfg)

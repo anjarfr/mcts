@@ -1,6 +1,6 @@
-from tree import Node
+from agent.tree import Node
 from math import log, sqrt
-from game import Game
+from games.game import Game
 from random import randint
 
 
@@ -10,7 +10,8 @@ class MCTS:
     """
 
     def __init__(self, cfg, init_state):
-        self.tree = Node(state=init_state, parent=None)
+        self.tree_policy = {}
+        self.root = Node(state=init_state, parent=None)
         self.q = {}
         self.c = cfg["mcts"]["c"]
 
@@ -46,9 +47,9 @@ class MCTS:
         t = 0
         a = None
         path = []
-        while not board.game_over():
+        while not board.game_over(self.root):
             s = board.state
-            node = self.tree.get_node_by_state(s)
+            node = self.root.get_node_by_state(s)
             path.append(node)
             if node is None:
                 legal = board.get_legal_actions()
