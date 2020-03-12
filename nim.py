@@ -19,7 +19,7 @@ class Nim(Game):
         else:
             raise Exception(
                 "Maximum number of stones that can be removed needs to be less than the starting number of pieces, "
-                "and bigger than 1, was {], {} and {} ".format(
+                "and bigger than 1, was {}, {} and {} ".format(
                     min_remove_stones, max_remove_stones, start_stones
                 )
             )
@@ -42,11 +42,11 @@ class Nim(Game):
         actions = list(range(1, limit + 1))
         return actions
 
-    def perform_action(self, state, action, player: int):
+    def perform_action(self, state, action):
         if self.is_legal_action(action):
             state -= action
             if self.verbose:
-                self.print_move(state, action, player)
+                self.print_move(state, action, self.player)
             if not self.game_over(state):
                 self.change_player()
         else:
@@ -57,12 +57,12 @@ class Nim(Game):
             )
         return state
 
-    def game_result(self, state, player):
+    def game_result(self, state):
         reward = 0
         if state == 0:
             if self.verbose:
                 print("Player {} wins".format(self.player))
-            reward = 1 if player == 1 else -1
+            reward = 1 if self.player == 1 else -1
         return reward
 
     def is_legal_action(self, action):

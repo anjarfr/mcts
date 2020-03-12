@@ -54,11 +54,13 @@ class MCTS:
                 current = node.q[action] + self.u(node, action, c)
                 if current > value:
                     chosen = node.children[i]
+                    value = current
         else:
             for i, action in enumerate(legal):
                 current = node.q[action] - self.u(node, action, c)
-                if current < chosen:
-                    chosen = current
+                if current < value:
+                    chosen = node.children[i]
+                    value = current
         return chosen
 
     def sim_tree(self):  # aka tree search
@@ -88,20 +90,21 @@ class MCTS:
     def sim_default(self):  # aka leaf evaluation
         """ Perform a rollout
         Random simulation until termination
-        Return leaf node, z """
+        Return end state, z """
         current_state = self.current_node.state
         while not self.game.game_over(current_state):
-            child = self.default_policy(self.current_node)
-            current_state = child.state
-            self.game.change_player()
+            new_state = self.default_policy(current_state)
+            current_state = self.game.perform_action(
+                state=current_state, action=new_state[1]
+            )
         z = self.game.game_result(current_state)
         return z
 
-    def default_policy(self, node: Node):
+    def default_policy(self, state):
         """ Choose a random child state """
-        children = self.game.generate_child_states(node.state)
+        children = self.game.generate_child_states(state)
         i = randint(0, len(children) - 1)
-        return node.get_child_by_state(children[i][0])
+        return children[i]
 
     def backpropagate(self, path: list, z: int):
         """
