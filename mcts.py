@@ -60,7 +60,7 @@ class MCTS:
                 return path
             self.current_node = self.select_move(node)
             path.append[self.current_node]
-            state = self.game.perform_action(state=node, self.current_node.action, )
+            state = self.game.perform_action(state=node, self.current_node.action, self.c)
             game_over = self.game.game_over(state)
         return path
     
