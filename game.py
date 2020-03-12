@@ -8,7 +8,8 @@ class Game:
 
     def __init__(self, cfg):
         self.verbose = cfg["verbose"]
-        self.player = self.set_initial_player(cfg)
+        self.initial_player = self.set_initial_player(cfg)
+        self.player = self.initial_player
 
     def set_position(self, state):
         self.state = state

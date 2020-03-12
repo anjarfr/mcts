@@ -35,6 +35,8 @@ class StateManager:
                 action = self.mcts.uct_search(self.state, self.game.player)
                 self.state = self.game.perform_action(self.state, action)
             self.mcts.reset(self.state, self.sim_game)
+            self.state = self.initial_state
+            self.game.player = self.game.initial_player
 
 
 def main():
