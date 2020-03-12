@@ -10,7 +10,6 @@ class MCTS:
     """
 
     def __init__(self, cfg, init_state):
-        self.tree_policy = {}
         self.tree = Node(state=init_state, parent=None)
         self.q = {}
         self.c = cfg["mcts"]["c"]
@@ -24,7 +23,7 @@ class MCTS:
             new_node.branch_visists[action] = 0
             self.q[(new_node, action)] = 0
 
-    def calculate_u(self, node: Node, action, c: int):
+    def u(self, node: Node, action, c: int):
         return c * sqrt(log(node.visits) / (1 + node.branch_visist[action]))
 
     def select_action(self, board: Game, node: Node, c: int):
@@ -32,14 +31,14 @@ class MCTS:
         chosen = self.target_policy[(node, legal[0])]
         if board.player == 1:
             for action in legal:
-                current = self.q[(node, action)] + self.calculate_u(node, action, c)
+                current = self.q[(node, action)] + self.u(node, action, c)
                 if current > chosen:
-                    chosen = current
+                    chosen = action
         else:
             for action in legal:
-                current = self.q[(node, action)] - self.calculate_u(node, action, c)
+                current = self.q[(node, action)] - self.u(node, action, c)
                 if current > chosen:
-                    chosen = current
+                    chosen = action
         return chosen
 
     def tree_search(self, board: Game):
