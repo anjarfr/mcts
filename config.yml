@@ -2,7 +2,7 @@ game:
   type: nim # nim or oldgold
   g: 10 # number of games in a batch, up to 100
   p: 1 # starting player option, 1, 2 or 3 (mixed)
-  m: 10 # number of simulations (and hence rollouts) per actual game move
+  m: 500 # number of simulations (and hence rollouts) per actual game move
 
 nim:
   n: 10 # starting number of pieces/stones in each game

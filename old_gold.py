@@ -68,9 +68,6 @@ class OldGold(Game):
             self.change_player()
         return state
 
-    def game_result(self, state):
-        return 1 if self.player == 1 else -1
-
     def game_over(self, state):
         return state.count(2) == 0
 

@@ -2,7 +2,6 @@ from nim import Nim
 from old_gold import OldGold
 from mcts import MCTS
 import yaml
-from copy import deepcopy
 
 
 class StateManager:
@@ -11,7 +10,8 @@ class StateManager:
     """
 
     def __init__(self, cfg):
-        self.game = self.initialize_game(cfg, verbose=True)
+        self.verbose = cfg["verbose"]
+        self.game = self.initialize_game(cfg, verbose=self.verbose)
         self.initial_state = self.game.generate_initial_state(cfg)
         self.sim_game = self.initialize_game(cfg, verbose=False)
         self.sim_game.generate_initial_state(cfg)
@@ -30,13 +30,14 @@ class StateManager:
 
     def play_game(self):
         for i in range(self.batch_size):
-            self.state = self.initial_state
+            if self.verbose:
+                print("\n---- New game, {} ----".format(i + 1))
+                print("Initial state is {}".format(self.initial_state))
             while not self.game.game_over(self.state):
                 # Do simulations and perform one move
                 action = self.mcts.uct_search(self.state, self.game.player)
                 self.state = self.game.perform_action(self.state, action)
-                print("Real game move")
-            self.mcts.reset(self.state, self.sim_game)
+            self.mcts.reset(self.initial_state)
             self.state = self.initial_state
             self.game.player = self.game.initial_player
 

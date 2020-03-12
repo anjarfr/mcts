@@ -15,7 +15,6 @@ class MCTS:
         self.current_node = self.root
         self.simulations = simulations
         self.c = cfg["mcts"]["c"]
-        self.expand_node(self.root)
 
     def create_root_node(self, init_state):
         node = Node(state=init_state, parent=None, action=None)
@@ -23,6 +22,7 @@ class MCTS:
         for action in legal_actions:
             node.q[action] = 0
             node.branch_visits[action] = 0
+        self.expand_node(node)
         return node
 
     def uct_search(self, state, player):
@@ -30,10 +30,10 @@ class MCTS:
         Return the child with highest visit count as action """
         """ Sets previous root as parent """
         self.game.player = player
-        self.root = self.root.get_node_by_state(state)
         for i in range(self.simulations):
             self.simulate()
         the_chosen_one = self.select_move(self.root, c=0)
+        self.root = the_chosen_one
         return the_chosen_one.action
 
     def simulate(self):
@@ -68,11 +68,10 @@ class MCTS:
         state = self.current_node.state
         path = []
         while not self.game.game_over(state):
-            node = self.current_node.get_node_by_state(state)
-            if not len(node.children):
+            if not len(self.current_node.children):
                 self.expand_node(self.current_node)
                 return path
-            self.current_node = self.select_move(node, self.c)
+            self.current_node = self.select_move(self.current_node, self.c)
             path.append(self.current_node)
             state = self.current_node.state
             if not self.game.game_over(state):
@@ -120,7 +119,6 @@ class MCTS:
                 node.q[action] + (z - node.q[action]) / node.branch_visists[action]
             )
 
-    def reset(self, state, game):
-        self.root = Node(state=state, parent=None, action=None)
+    def reset(self, init_state):
+        self.root = self.create_root_node(init_state)
         self.current_node = self.root
-        self.game = game

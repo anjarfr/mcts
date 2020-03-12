@@ -11,8 +11,8 @@ class Game:
         self.initial_player = self.set_initial_player(cfg)
         self.player = self.initial_player
 
-    def set_position(self, state):
-        self.state = state
+    def game_result(self):
+        return 1 if self.player == 1 else -1
 
     def set_initial_player(self, cfg):
         player = cfg["game"]["p"]

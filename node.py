@@ -37,7 +37,7 @@ class Node:
     def get_node_by_state(self, state):
         if self.state == state:
             return self
-        elif len(self.children):
+        if len(self.children):
             for child in self.children:
                 return self.get_node_by_state(child)
         return None
