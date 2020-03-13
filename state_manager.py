@@ -37,14 +37,26 @@ class StateManager:
             self.p2_wins += 1
 
     def print_winner_stats(self):
+        total = self.p1_wins + self.p2_wins
+        if self.game.initial_player == 3:
+            print(
+                "\nPlayer 1 wins {} of {} games - {} % of the time".format(
+                    self.p1_wins, total, self.p1_wins / total * 100,
+                )
+            )
+            print(
+                "Player 2 wins {} of {} games - {} % of the time".format(
+                    self.p2_wins, total, self.p2_wins / total * 100,
+                )
+            )
+            return
         if self.game.initial_player == 1:
             wins = self.p1_wins
         else:
             wins = self.p2_wins
-        total = self.p1_wins + self.p2_wins
         percent = wins * 100 / total
         print(
-            "Player {} wins {} of {} games - {} % of the time".format(
+            "\nPlayer {} wins {} of {} games - {} % of the time".format(
                 self.game.initial_player, wins, total, percent,
             )
         )
