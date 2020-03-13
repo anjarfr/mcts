@@ -25,9 +25,10 @@ class MCTS:
             node.q[action] = 0
             node.branch_visits[action] = 0
         self.expand_node(node)
+        print(node.print_tree())
         return node
 
-    def uct_search(self, state, player):
+    def uct_search(self, player):
         """ This is one move by one player in the game
         Return the child with highest visit count as action """
         """ Sets previous root as parent """
@@ -119,7 +120,7 @@ class MCTS:
             action = node.get_action_to(path[i + 1])
             node.visits += 1
             node.branch_visits[action] += 1
-            node.q[action] = node.q[action] + z / node.visits
+            node.q[action] = node.q[action] + z / node.branch_visits[action]
 
     def reset(self, init_state):
         self.root = self.create_root_node(init_state)

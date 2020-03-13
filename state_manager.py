@@ -69,7 +69,7 @@ class StateManager:
                 print("Initial state is {}".format(self.initial_state))
             while not self.game.game_over(self.state):
                 # Do simulations and perform one move
-                action = self.mcts.uct_search(self.state, self.game.player)
+                action = self.mcts.uct_search(self.game.player)
                 self.state = self.game.perform_action(self.state, action)
 
             # Update statistics

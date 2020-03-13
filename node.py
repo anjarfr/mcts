@@ -33,7 +33,6 @@ class Node:
         for action in actions_from_child:
             child.q[action] = 0
             child.branch_visits[action] = 0
-
         self.children.append(child)
 
     def get_node_by_state(self, state):
@@ -54,3 +53,11 @@ class Node:
         for i, child in enumerate(self.children):
             if child.state == chosen_child.state:
                 return self.actions[i]
+
+    def print_tree(self):
+        s = ''
+        s += '{} {}'.format(self.state, self.action) + '\n'
+        if len(self.children):
+            for child in self.children:
+                s += child.print_tree()
+        return s
