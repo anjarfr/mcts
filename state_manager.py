@@ -19,6 +19,7 @@ class StateManager:
         self.batch_size = cfg["game"]["g"]
         self.simulations = cfg["game"]["m"]
         self.mcts = MCTS(cfg, self.sim_game, self.state, self.simulations)
+        self.p1_wins, self.p2_wins = 0, 0
 
     def initialize_game(self, cfg, verbose):
         game_type = cfg["game"]["type"]
@@ -37,9 +38,19 @@ class StateManager:
                 # Do simulations and perform one move
                 action = self.mcts.uct_search(self.state, self.game.player)
                 self.state = self.game.perform_action(self.state, action)
+            winner = self.game.game_result()
+            if winner == 1:
+                self.p1_wins += 1
+            else:
+                self.p2_wins += 1
             self.mcts.reset(self.initial_state)
             self.state = self.initial_state
             self.game.player = self.game.initial_player
+        print(
+            "Player 1 wins {} % of the time".format(
+                self.p1_wins * 100 / (self.p1_wins + self.p2_wins)
+            )
+        )
 
 
 def main():

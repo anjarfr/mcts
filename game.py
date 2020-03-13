@@ -60,12 +60,6 @@ class Game:
         """
         pass
 
-    def game_result(self, state):
-        """
-        :return: int (1 or -1 depending on who won)
-        """
-        pass
-
     def generate_child_states(self, state):
         """
         :return: List containing tuples with all child states of given state

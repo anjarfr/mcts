@@ -17,8 +17,10 @@ class MCTS:
         self.c = cfg["mcts"]["c"]
 
     def create_root_node(self, init_state):
+        """ Initialize q and N(s,a) for the root node. Expand the node """
         node = Node(state=init_state, parent=None, action=None)
         legal_actions = self.game.get_legal_actions(init_state)
+        node.actions = legal_actions
         for action in legal_actions:
             node.q[action] = 0
             node.branch_visits[action] = 0
@@ -61,10 +63,13 @@ class MCTS:
                 if current < value:
                     chosen = node.children[i]
                     value = current
+        if c == 0:
+            print("Q value for chosen node is {}".format(value))
         return chosen
 
     def sim_tree(self):  # aka tree search
         """  """
+        self.current_node = self.root
         state = self.current_node.state
         path = []
         while not self.game.game_over(state):
@@ -79,12 +84,14 @@ class MCTS:
         return path
 
     def expand_node(self, node: Node):  # aka node expansion
+        """ Find the node's children and which actions lead to them
+        The insert the child and add to node's children list """
         child_states = self.game.generate_child_states(node.state)
         for sap in child_states:
             state = sap[0]
             action = sap[1]
-            legal_actions = self.game.get_legal_actions(state)
-            node.insert(state, action, legal_actions)
+            actions_from_child = self.game.get_legal_actions(state)
+            node.insert(state, action, actions_from_child)
 
     def sim_default(self):  # aka leaf evaluation
         """ Perform a rollout
@@ -96,7 +103,7 @@ class MCTS:
             current_state = self.game.perform_action(
                 state=current_state, action=new_state[1]
             )
-        z = self.game.game_result(current_state)
+        z = self.game.game_result()
         return z
 
     def default_policy(self, state):
@@ -114,9 +121,9 @@ class MCTS:
             node = path[i]
             action = node.get_action_to(path[i + 1])
             node.visits += 1
-            node.branch_visists[action] += 1
+            node.branch_visits[action] += 1
             node.q[action] = (
-                node.q[action] + (z - node.q[action]) / node.branch_visists[action]
+                node.q[action] + (z - node.visits) / node.branch_visits[action]
             )
 
     def reset(self, init_state):

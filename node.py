@@ -1,9 +1,9 @@
 class Node:
-    
+
     """ Node for generating tree structure """
-    
+
     def __init__(self, state, parent, action):
-    
+
         """ Description
         :state:         The game state in this node. Can be any type
         :parent:        Parent Node of type Node
@@ -24,15 +24,17 @@ class Node:
         self.visits = 1
         self.branch_visits = {}
 
-    def insert(self, new_state, action, legal_actions):
-        child = Node(state=new_state, parent=self, action=action)
-        child.actions = legal_actions
-        for action in legal_actions:
+    def insert(self, child_state, action_to_child, actions_from_child):
+        """ Insert a new node into the tree. Updates the child's q and N(s,a)
+        values. Appends all legal actions the child can take but no resulting
+        state """
+        child = Node(state=child_state, parent=self, action=action_to_child)
+        child.actions = actions_from_child
+        for action in actions_from_child:
             child.q[action] = 0
             child.branch_visits[action] = 0
-        
+
         self.children.append(child)
-        self.actions.append(action)
 
     def get_node_by_state(self, state):
         if self.state == state:
