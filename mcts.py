@@ -63,8 +63,6 @@ class MCTS:
                 if current < value:
                     chosen = node.children[i]
                     value = current
-        if c == 0:
-            print("Q value for chosen node is {}".format(value))
         return chosen
 
     def sim_tree(self):  # aka tree search
@@ -100,9 +98,8 @@ class MCTS:
         current_state = self.current_node.state
         while not self.game.game_over(current_state):
             new_state = self.default_policy(current_state)
-            current_state = self.game.perform_action(
-                state=current_state, action=new_state[1]
-            )
+            current_state = new_state[0]
+            self.game.change_player()
         z = self.game.game_result()
         return z
 
@@ -122,9 +119,7 @@ class MCTS:
             action = node.get_action_to(path[i + 1])
             node.visits += 1
             node.branch_visits[action] += 1
-            node.q[action] = (
-                node.q[action] + (z - node.visits) / node.branch_visits[action]
-            )
+            node.q[action] = node.q[action] + z / node.visits
 
     def reset(self, init_state):
         self.root = self.create_root_node(init_state)

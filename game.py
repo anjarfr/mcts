@@ -8,14 +8,14 @@ class Game:
 
     def __init__(self, cfg, verbose):
         self.verbose = verbose
-        self.initial_player = self.set_initial_player(cfg)
-        self.player = self.initial_player
+        self.initial_player = cfg["game"]["p"]
+        self.player = self.set_initial_player()
 
     def game_result(self):
         return 1 if self.player == 1 else -1
 
-    def set_initial_player(self, cfg):
-        player = cfg["game"]["p"]
+    def set_initial_player(self):
+        player = self.initial_player
         if player not in [1, 2, 3]:
             raise Exception(
                 "That is not a valid start player, please choose 1, 2 or 3. You chose {}".format(

@@ -29,6 +29,26 @@ class StateManager:
             game = OldGold(cfg, verbose)
         return game
 
+    def update_statistics(self):
+        winner = self.game.game_result()
+        if winner == 1:
+            self.p1_wins += 1
+        else:
+            self.p2_wins += 1
+
+    def print_winner_stats(self):
+        if self.game.initial_player == 1:
+            wins = self.p1_wins
+        else:
+            wins = self.p2_wins
+        total = self.p1_wins + self.p2_wins
+        percent = wins * 100 / total
+        print(
+            "Player {} wins {} of {} games - {} % of the time".format(
+                self.game.initial_player, wins, total, percent,
+            )
+        )
+
     def play_game(self):
         for i in range(self.batch_size):
             if self.verbose:
@@ -38,19 +58,16 @@ class StateManager:
                 # Do simulations and perform one move
                 action = self.mcts.uct_search(self.state, self.game.player)
                 self.state = self.game.perform_action(self.state, action)
-            winner = self.game.game_result()
-            if winner == 1:
-                self.p1_wins += 1
-            else:
-                self.p2_wins += 1
+
+            # Update statistics
+            self.update_statistics()
+
+            # Reset game
             self.mcts.reset(self.initial_state)
             self.state = self.initial_state
-            self.game.player = self.game.initial_player
-        print(
-            "Player 1 wins {} % of the time".format(
-                self.p1_wins * 100 / (self.p1_wins + self.p2_wins)
-            )
-        )
+            self.game.player = self.game.set_initial_player()
+
+        self.print_winner_stats()
 
 
 def main():
