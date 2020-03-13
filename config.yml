@@ -1,5 +1,5 @@
 game:
-  type: nim # nim or oldgold
+  type: oldgold # nim or oldgold
   g: 100 # number of games in a batch, up to 100
   p: 2 # starting player option, 1, 2 or 3 (mixed)
   m: 500 # number of simulations (and hence rollouts) per actual game move
@@ -9,7 +9,7 @@ nim:
   k: 3 # maximum number of pieces that either player can take on their turn (min 1)
 
 oldgold:
-  b_init: [1, 1, 0, 0, 2, 1, 1, 1, 0, 1] # initial board configuration
+  b_init: [1, 1, 0, 0, 2, 1, 1, 1, 0, 0] # initial board configuration
 
 verbose: True # Whether the details of moves for each game is shown
 

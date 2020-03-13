@@ -44,7 +44,7 @@ class Nim(Game):
         if self.is_legal_action(action):
             state -= action
             if self.verbose:
-                self.print_move(state, action, self.player)
+                self.print_move(state, action)
             if not self.game_over(state):
                 self.change_player()
             elif self.verbose:
@@ -63,9 +63,9 @@ class Nim(Game):
     def game_over(self, state):
         return state == 0
 
-    def print_move(self, state, action, player):
+    def print_move(self, state, action):
         print(
             "Player {} selects {} stones: Remaining stones = {}".format(
-                player, action, state
+                self.player, action, state
             )
         )

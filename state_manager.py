@@ -2,6 +2,7 @@ from nim import Nim
 from old_gold import OldGold
 from mcts import MCTS
 import yaml
+from copy import deepcopy
 
 
 class StateManager:
@@ -15,7 +16,7 @@ class StateManager:
         self.initial_state = self.game.generate_initial_state(cfg)
         self.sim_game = self.initialize_game(cfg, verbose=False)
         self.sim_game.generate_initial_state(cfg)
-        self.state = self.initial_state
+        self.state = deepcopy(self.initial_state)
         self.batch_size = cfg["game"]["g"]
         self.simulations = cfg["game"]["m"]
         self.mcts = MCTS(cfg, self.sim_game, self.state, self.simulations)
@@ -75,8 +76,8 @@ class StateManager:
             self.update_statistics()
 
             # Reset game
-            self.mcts.reset(self.initial_state)
-            self.state = self.initial_state
+            self.mcts.reset(deepcopy(self.initial_state))
+            self.state = deepcopy(self.initial_state)
             self.game.player = self.game.set_initial_player()
 
         self.print_winner_stats()
@@ -88,6 +89,8 @@ def main():
 
     player = StateManager(cfg)
     player.play_game()
+
+    # print(player.game.get_legal_actions(player.state))
 
 
 if __name__ == "__main__":

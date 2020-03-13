@@ -20,17 +20,12 @@ class OldGold(Game):
         actions = []
         if state[0] != 0:
             actions.append((0, 0))
-        i = 0
-        j = i + 1
-        while j <= len(state):
-            while state[i] != 0:
-                i += 1
-                j += 1
-            while state[j] == 0:
-                j += 1
-            actions.extend([(j, x) for x in range(i, j)])
-            i = j + 1
-            j = i + 1
+        for i in range(len(state)):
+            if state[i] == 0:
+                for j in range(i+1, len(state)):
+                    if state[j] != 0:
+                        actions.append((j, i))
+                        break
         return actions
 
     def generate_child_states(self, state):
@@ -43,7 +38,7 @@ class OldGold(Game):
         for action in actions:
             start = action[0]
             end = action[1]
-            child_state = deepcopy(self.state)
+            child_state = deepcopy(state)
             if start == end == 0:
                 child_state[0] = 0
             else:
@@ -63,7 +58,7 @@ class OldGold(Game):
             state[end] = state[start]
             state[start] = 0
         if self.verbose:
-            self.print_move(prev_state, state, self.player, start, end)
+            self.print_move(prev_state, state, start, end)
         if not self.game_over(state):
             self.change_player()
         return state
@@ -75,11 +70,13 @@ class OldGold(Game):
         coin_type = "copper" if prev_state[start] == 1 else "gold"
         if start == end == 0:
             print(
-                "Player {} picks up {} coin: {}".format(self.player, coin_type, state)
+                "Player {} picks up {} coin:\t\t\t{}".format(
+                    self.player, coin_type, state
+                )
             )
         else:
             print(
-                "Player {} moves {} coin from {} to {}: {}".format(
+                "Player {} moves {} coin from {} to {}:\t\t{}".format(
                     self.player, coin_type, start, end, state
                 )
             )
