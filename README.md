@@ -50,6 +50,8 @@ is the other player's turn to repeat the whole process to choose *their* best mo
 * Q(s,a): Total simulation reward 
 * N(s,a): Total number of visits
 * c: Constant that controls exploration vs exploitation
+* Episode: Each actual game 
+* Simulations: Game simulations, not performed on the real game
 
-
-  
+#### Playing the game
+At the end of each episode (actual game), the tree policy is discarded  
