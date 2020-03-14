@@ -12,7 +12,7 @@ class Game:
         self.player = self.set_initial_player()
 
     def game_result(self):
-        return 1 if self.player == 1 else -1
+        return 1 if self.player == self.initial_player else 0
 
     def set_initial_player(self):
         player = self.initial_player
@@ -24,6 +24,7 @@ class Game:
             )
         if player == 3:
             player = randint(1, 2)
+        self.initial_player = player
         return player
 
     def change_player(self):

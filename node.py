@@ -32,7 +32,8 @@ class Node:
         child.actions = actions_from_child
         for action in actions_from_child:
             child.q[action] = 0
-            child.branch_visits[action] = 0
+            child.branch_visits[action] = 1
+
         self.children.append(child)
 
     def get_node_by_state(self, state):

@@ -1,5 +1,5 @@
 from node import Node
-from math import log, sqrt
+from math import log, sqrt, inf
 from random import randint
 
 
@@ -25,7 +25,6 @@ class MCTS:
             node.q[action] = 0
             node.branch_visits[action] = 0
         self.expand_node(node)
-        print(node.print_tree())
         return node
 
     def uct_search(self, player):
@@ -37,14 +36,21 @@ class MCTS:
             self.simulate()
         the_chosen_one = self.select_move(self.root, c=0)
         self.root = the_chosen_one
+        # print(self.root.print_tree())
         return the_chosen_one.action
 
     def simulate(self):
         path = self.sim_tree()
+        s = ""
+        for p in path:
+            s += str(p.state)
+        #print(s)
         z = self.sim_default()
         self.backpropagate(path, z)
 
     def u(self, node: Node, action, c: int):
+        if node.branch_visits[action] == 0:
+            return inf
         return c * sqrt(log(node.visits) / (1 + node.branch_visits[action]))
 
     def select_move(self, node: Node, c: int):
