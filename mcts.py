@@ -39,21 +39,20 @@ class MCTS:
         return the_chosen_one.action
 
     def simulate(self):
+        """ Do a simulation from a leaf node and update its
+        value based on the finite state, z, from rollout """
         path = self.sim_tree()
-        s = ""
-        for p in path:
-            s += str(p.state)
-        # print(s)
         z = self.sim_default()
         self.backpropagate(path, z)
 
     def u(self, node: Node, action, c: int):
+        """ Exploration bonus """
         if node.visits == 0:
             return inf
         return c * sqrt(log(node.parent.visits) / (node.visits))
 
     def select_move(self, node: Node, c: int):
-        # Returns the child of input node with the best Q + u value
+        """ Returns the child of input node with the best Q + u value """
         legal = node.actions
         chosen = node.children[0]
         best_value = node.q[legal[0]] + self.u(chosen, legal[0], c)
@@ -74,7 +73,8 @@ class MCTS:
         return chosen
 
     def sim_tree(self):  # aka tree search
-        """  """
+        """ Find a leaf node from the current root
+        node and return the path to it """
         self.current_node = self.root
         state = self.current_node.state
         path = [self.root]
