@@ -44,39 +44,41 @@ class MCTS:
         s = ""
         for p in path:
             s += str(p.state)
-        #print(s)
+        # print(s)
         z = self.sim_default()
         self.backpropagate(path, z)
 
     def u(self, node: Node, action, c: int):
-        if node.branch_visits[action] == 0:
+        if node.visits == 0:
             return inf
-        return c * sqrt(log(node.visits) / (1 + node.branch_visits[action]))
+        return c * sqrt(log(node.parent.visits) / (node.visits))
 
     def select_move(self, node: Node, c: int):
-        # Returns the Node with the best Q + u value
+        # Returns the child of input node with the best Q + u value
         legal = node.actions
         chosen = node.children[0]
-        value = node.q[legal[0]] + self.u(node, legal[0], c)
+        best_value = node.q[legal[0]] + self.u(chosen, legal[0], c)
         if self.game.player == 1:
             for i, action in enumerate(legal):
-                current = node.q[action] + self.u(node, action, c)
-                if current > value:
-                    chosen = node.children[i]
-                    value = current
+                current_node = node.children[i]
+                current_value = node.q[action] + self.u(current_node, action, c)
+                if current_value > best_value:
+                    chosen = current_node
+                    best_value = current_value
         else:
             for i, action in enumerate(legal):
-                current = node.q[action] - self.u(node, action, c)
-                if current < value:
-                    chosen = node.children[i]
-                    value = current
+                current_node = node.children[i]
+                current_value = node.q[action] - self.u(current_node, action, c)
+                if current_value < best_value:
+                    chosen = current_node
+                    best_value = current_value
         return chosen
 
     def sim_tree(self):  # aka tree search
         """  """
         self.current_node = self.root
         state = self.current_node.state
-        path = []
+        path = [self.root]
         while not self.game.game_over(state):
             if not len(self.current_node.children):
                 self.expand_node(self.current_node)
@@ -123,10 +125,10 @@ class MCTS:
         """
         for i in range(len(path) - 1):
             node = path[i]
-            action = node.get_action_to(path[i + 1])
+            action = path[i + 1].action
             node.visits += 1
             node.branch_visits[action] += 1
-            node.q[action] = node.q[action] + z / node.branch_visits[action]
+            node.q[action] += z
 
     def reset(self, init_state):
         self.root = self.create_root_node(init_state)

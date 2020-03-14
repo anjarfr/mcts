@@ -1,4 +1,5 @@
 from random import randint
+from copy import copy
 
 
 class Game:
@@ -12,10 +13,10 @@ class Game:
         self.player = self.set_initial_player()
 
     def game_result(self):
-        return 1 if self.player == self.initial_player else 0
+        return 1 if self.player == 1 else -1
 
     def set_initial_player(self):
-        player = self.initial_player
+        player = copy(self.initial_player)
         if player not in [1, 2, 3]:
             raise Exception(
                 "That is not a valid start player, please choose 1, 2 or 3. You chose {}".format(
@@ -24,7 +25,6 @@ class Game:
             )
         if player == 3:
             player = randint(1, 2)
-        self.initial_player = player
         return player
 
     def change_player(self):

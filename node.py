@@ -21,7 +21,7 @@ class Node:
         self.children = []
         self.actions = []
         self.q = {}
-        self.visits = 1
+        self.visits = 0
         self.branch_visits = {}
 
     def insert(self, child_state, action_to_child, actions_from_child):
@@ -32,8 +32,7 @@ class Node:
         child.actions = actions_from_child
         for action in actions_from_child:
             child.q[action] = 0
-            child.branch_visits[action] = 1
-
+            child.branch_visits[action] = 0
         self.children.append(child)
 
     def get_node_by_state(self, state):

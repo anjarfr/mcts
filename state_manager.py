@@ -1,8 +1,8 @@
-from nim import Nim
 from old_gold import OldGold
-from mcts import MCTS
-import yaml
 from copy import deepcopy
+from mcts import MCTS
+from nim import Nim
+import yaml
 
 
 class StateManager:
@@ -71,15 +71,12 @@ class StateManager:
                 # Do simulations and perform one move
                 action = self.mcts.uct_search(self.game.player)
                 self.state = self.game.perform_action(self.state, action)
-
             # Update statistics
             self.update_statistics()
-
             # Reset game
             self.mcts.reset(deepcopy(self.initial_state))
             self.state = deepcopy(self.initial_state)
             self.game.player = self.game.set_initial_player()
-
         self.print_winner_stats()
 
 
