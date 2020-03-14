@@ -12,8 +12,6 @@ class Node:
         :actions:       List of actions (any type) that can be taken from this node
         :q:             Dictionary with {'action': q(s,a)} where s is self.state
         :visits:        Integer N(s). Number of times this node has been visited
-        :branch_visits: Dictionary with {'action': N(s,a)}. Number of times a
-                        branch from this node has been visited
         """
         self.parent = parent
         self.state = state
@@ -22,7 +20,6 @@ class Node:
         self.actions = []
         self.q = {}
         self.visits = 0
-        self.branch_visits = {}
 
     def insert(self, child_state, action_to_child, actions_from_child):
         """ Insert a new node into the tree. Updates the child's q and N(s,a)
@@ -32,7 +29,6 @@ class Node:
         child.actions = actions_from_child
         for action in actions_from_child:
             child.q[action] = 0
-            child.branch_visits[action] = 0
         self.children.append(child)
 
     def get_node_by_state(self, state):

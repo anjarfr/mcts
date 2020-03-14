@@ -23,7 +23,6 @@ class MCTS:
         node.actions = legal_actions
         for action in legal_actions:
             node.q[action] = 0
-            node.branch_visits[action] = 0
         self.expand_node(node)
         return node
 
@@ -127,7 +126,6 @@ class MCTS:
             node = path[i]
             action = path[i + 1].action
             node.visits += 1
-            node.branch_visits[action] += 1
             node.q[action] += z
 
     def reset(self, init_state):
