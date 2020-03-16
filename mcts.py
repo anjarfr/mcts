@@ -1,6 +1,9 @@
 from node import Node
 from math import log, sqrt, inf
-from random import randint
+import random
+from numpy import log
+
+random.seed(2020)
 
 
 class MCTS:
@@ -34,8 +37,9 @@ class MCTS:
         for i in range(self.simulations):
             self.simulate()
         the_chosen_one = self.select_move(self.root, c=0)
+
+        #self.root.print_tree()
         self.root = the_chosen_one
-        # print(self.root.print_tree())
         return the_chosen_one.action
 
     def simulate(self):
@@ -45,28 +49,31 @@ class MCTS:
         z = self.sim_default()
         self.backpropagate(path, z)
 
-    def u(self, node: Node, action, c: int):
+    def u(self, node: Node, c: int):
         """ Exploration bonus """
         if node.visits == 0:
             return inf
-        return c * sqrt(log(node.parent.visits) / (node.visits))
+        return c * 2 * sqrt(log(node.parent.visits)/node.visits)
 
     def select_move(self, node: Node, c: int):
         """ Returns the child of input node with the best Q + u value """
+
         legal = node.actions
         chosen = node.children[0]
-        best_value = node.q[legal[0]] + self.u(chosen, legal[0], c)
+        action = chosen.action
+        best_value = node.q[action] + self.u(chosen, c)
+
         if self.game.player == 1:
             for i, action in enumerate(legal):
                 current_node = node.children[i]
-                current_value = node.q[action] + self.u(current_node, action, c)
+                current_value = node.q[action] + self.u(current_node, c)
                 if current_value > best_value:
                     chosen = current_node
                     best_value = current_value
         else:
             for i, action in enumerate(legal):
                 current_node = node.children[i]
-                current_value = node.q[action] - self.u(current_node, action, c)
+                current_value = node.q[action] - self.u(current_node, c)
                 if current_value < best_value:
                     chosen = current_node
                     best_value = current_value
@@ -78,15 +85,18 @@ class MCTS:
         self.current_node = self.root
         state = self.current_node.state
         path = [self.root]
+
         while not self.game.game_over(state):
             if not len(self.current_node.children):
-                self.expand_node(self.current_node)
+                self.expand_node(self.current_node)     # Bør vi expande her?
                 return path
+
             self.current_node = self.select_move(self.current_node, self.c)
             path.append(self.current_node)
             state = self.current_node.state
             if not self.game.game_over(state):
                 self.game.change_player()
+
         return path
 
     def expand_node(self, node: Node):  # aka node expansion
@@ -114,7 +124,7 @@ class MCTS:
     def default_policy(self, state):
         """ Choose a random child state """
         children = self.game.generate_child_states(state)
-        i = randint(0, len(children) - 1)
+        i = random.randint(0, len(children) - 1)
         return children[i]
 
     def backpropagate(self, path: list, z: int):
@@ -122,11 +132,13 @@ class MCTS:
         Update Q values in the path taken based on reward, z
         Also update the number of visits for nodes and branches in the path
         """
-        for i in range(len(path) - 1):
-            node = path[i]
-            action = path[i + 1].action
+
+        for node in path:
+            action = node.action
             node.visits += 1
-            node.q[action] += z
+            node.t += z
+            if node.parent:
+                node.parent.q[action] += z
 
     def reset(self, init_state):
         self.root = self.create_root_node(init_state)

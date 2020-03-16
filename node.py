@@ -20,6 +20,7 @@ class Node:
         self.actions = []
         self.q = {}
         self.visits = 0
+        self.t = 0
 
     def insert(self, child_state, action_to_child, actions_from_child):
         """ Insert a new node into the tree. Updates the child's q and N(s,a)
@@ -50,10 +51,27 @@ class Node:
             if child.state == chosen_child.state:
                 return self.actions[i]
 
+    # def print_tree(self):
+    #     s = ''
+    #     s += '{} {}'.format(self.state, self.action) + '\n'
+    #     if len(self.children):
+    #         for child in self.children:
+    #             s += child.print_tree()
+    #     return s
+
     def print_tree(self):
-        s = ''
-        s += '{} {}'.format(self.state, self.action) + '\n'
-        if len(self.children):
-            for child in self.children:
-                s += child.print_tree()
-        return s
+        children = self.children
+
+        print("Root:", "state", self.state, "t", self.t, "visits", self.visits, "q", self.q)
+
+        while len(children):
+            temp_children = []
+            for _ in children:
+                child = children.pop(0)
+                print("Child: ", "state ", child.state, "parent", child.parent.state, "t ", child.t, "visits ", child.visits, "q ", child.q)
+                for temp_child in child.children:
+                    temp_children.append(temp_child)
+
+            for child in temp_children:
+                children.append(child)
+
