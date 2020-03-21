@@ -13,7 +13,7 @@ class Game:
         self.player = self.set_initial_player()
 
     def game_result(self):
-        return 1 if self.player == 1 else -1
+        return 1 if self.player == 1 else 0
 
     def set_initial_player(self):
         player = copy(self.initial_player)
@@ -32,6 +32,9 @@ class Game:
             self.player = 2
         else:
             self.player = 1
+
+    def set_player(self, player):
+        self.player = player
 
     def winner(self):
         return self.player

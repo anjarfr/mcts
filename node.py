@@ -1,3 +1,5 @@
+from math import log, sqrt, inf
+
 class Node:
 
     """ Node for generating tree structure """
@@ -13,24 +15,34 @@ class Node:
         :q:             Dictionary with {'action': q(s,a)} where s is self.state
         :visits:        Integer N(s). Number of times this node has been visited
         """
-        self.parent = parent
+
         self.state = state
+        self.parent = parent
         self.action = action
-        self.children = []
+
+        self.expanded = False
+        self.children = {}
         self.actions = []
         self.q = {}
         self.visits = 0
         self.t = 0
 
-    def insert(self, child_state, action_to_child, actions_from_child):
+    def Q(self):
+        return self.t / (1 + self.visits)
+
+    def U(self, c: int):
+        """ Exploration bonus """
+        if self.visits == 0:
+            return inf
+        return c * sqrt(log(self.parent.visits)/self.visits)
+
+    def insert(self, child_state, action_to_child):
         """ Insert a new node into the tree. Updates the child's q and N(s,a)
         values. Appends all legal actions the child can take but no resulting
         state """
         child = Node(state=child_state, parent=self, action=action_to_child)
-        child.actions = actions_from_child
-        for action in actions_from_child:
-            child.q[action] = 0
-        self.children.append(child)
+        self.actions.append(action_to_child)
+        self.children[action_to_child] = child
 
     def get_node_by_state(self, state):
         if self.state == state:

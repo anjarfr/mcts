@@ -6,7 +6,7 @@ game:
 
 nim:
   n: 11 # starting number of pieces/stones in each game
-  k: 3 # maximum number of pieces that either player can take on their turn (min 1)
+  k: 5 # maximum number of pieces that either player can take on their turn (min 1)
 
 oldgold:
   b_init: [1, 1, 0, 0, 2, 1, 1, 1, 0, 0] # initial board configuration
