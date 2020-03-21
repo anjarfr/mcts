@@ -53,7 +53,7 @@ class MCTS:
         """ Exploration bonus """
         if node.visits == 0:
             return inf
-        return c * 2 * sqrt(log(node.parent.visits)/node.visits)
+        return c * sqrt(log(node.parent.visits)/node.visits)
 
     def select_move(self, node: Node, c: int):
         """ Returns the child of input node with the best Q + u value """
