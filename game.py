@@ -1,5 +1,8 @@
 from random import randint
 from copy import copy
+import random
+
+random.seed(1337)
 
 
 class Game:
@@ -33,8 +36,8 @@ class Game:
         else:
             self.player = 1
 
-    def winner(self):
-        return self.player
+    def set_player(self, player):
+        self.player = player
 
     def generate_initial_state(self, cfg):
         """

@@ -67,16 +67,22 @@ class StateManager:
             if self.verbose:
                 print("\n---- New game, {} ----".format(i + 1))
                 print("Initial state is {}".format(self.initial_state))
+
             while not self.game.game_over(self.state):
                 # Do simulations and perform one move
                 action = self.mcts.uct_search(self.game.player)
                 self.state = self.game.perform_action(self.state, action)
+
+                # self.mcts.reset(deepcopy(self.state))   # Usikker på om dette er nødvendig..
+
             # Update statistics
             self.update_statistics()
             # Reset game
+
             self.mcts.reset(deepcopy(self.initial_state))
             self.state = deepcopy(self.initial_state)
             self.game.player = self.game.set_initial_player()
+
         self.print_winner_stats()
 
 
@@ -86,8 +92,6 @@ def main():
 
     player = StateManager(cfg)
     player.play_game()
-
-    # print(player.game.get_legal_actions(player.state))
 
 
 if __name__ == "__main__":
