@@ -34,7 +34,7 @@ class Node:
             return inf
         return c * sqrt(log(self.parent.visits)/self.visits)
 
-    def insert(self, child_state, action_to_child):
+    def expand(self, child_state, action_to_child):
         """ Insert a new child node into the tree. Add action to parent """
         child = Node(state=child_state, parent=self, action=action_to_child)
         self.actions.append(action_to_child)

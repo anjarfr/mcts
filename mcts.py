@@ -22,17 +22,6 @@ class MCTS:
         node = Node(state=init_state, parent=None, action=None)
         return node
 
-    # Unused, use insert instead, maybe rename insert to expand in Node?
-    def expand_node(self, node: Node):  # aka node expansion
-        """ Find the node's children and which actions lead to them
-        The insert the child and add to node's children list """
-
-        child_states = self.game.generate_child_states(node.state)
-        for sap in child_states:
-            state = sap[0]
-            action = sap[1]
-            node.insert(state, action)
-
     def uct_search(self, player):
         """ Simulations for one move by one player in the game
         Return the child with highest score as action """
@@ -45,7 +34,7 @@ class MCTS:
         self.game.set_player(player)
         the_chosen_one = self.select_move(self.root, c=0)
 
-        # self.root.print_tree()
+        #self.root.print_tree()
 
         self.root = the_chosen_one
         return the_chosen_one.action
@@ -55,8 +44,8 @@ class MCTS:
         Do a simulation from this root and update it and its parent's
         value based on the finite state, z, from rollout """
 
-        path = self.sim_tree()
-        z = self.sim_default()
+        path = self.tree_search()
+        z = self.leaf_evaluation()
         self.backpropagate(path, z)
 
     def fully_expanded(self, node: Node):
@@ -69,7 +58,28 @@ class MCTS:
         expanded = actions == children
         return expanded
 
-    def sim_tree(self):  # aka tree search
+    def node_expansion(self, node):
+        """ Choose random child node to expand, and insert to tree
+        Return this child
+        """
+        # Find out which children of the node have not been visited
+        child_states = self.game.generate_child_states(node.state)
+        existing_child_actions = list(node.children.keys())
+        missing_child_actions = []
+
+        for sap in child_states:
+            action = sap[1]
+            if action not in existing_child_actions:
+                state = sap[0]
+                missing_child_actions.append((state, action))
+
+        # Choose randomly between unvisited children
+        chosen = random.choice(missing_child_actions)
+        node.expand(chosen[0], chosen[1])  # Here we expand with only this chosen child
+
+        return node.children[chosen[1]]
+
+    def tree_search(self):
         """ Find a leaf node from the current root
         node and return the path to it """
 
@@ -81,21 +91,7 @@ class MCTS:
             # If the children of the current node have not been added to the tree
             if not self.fully_expanded(self.current_node):
 
-                # Find out which children have not been visited
-                child_states = self.game.generate_child_states(self.current_node.state)
-                existing_child_actions = list(self.current_node.children.keys())
-                missing_child_actions = []
-
-                for sap in child_states:
-                    action = sap[1]
-                    if action not in existing_child_actions:
-                        state = sap[0]
-                        missing_child_actions.append((state, action))
-
-                # Choose randomly between unvisited children
-                chosen = random.choice(missing_child_actions)
-                self.current_node.insert(chosen[0], chosen[1])  # Here we expand with only this chosen child
-                self.current_node = self.current_node.children[chosen[1]]
+                self.current_node = self.node_expansion(self.current_node)
                 state = self.current_node.state
                 path.append(self.current_node)
 
@@ -142,7 +138,7 @@ class MCTS:
 
         return chosen
 
-    def sim_default(self):  # aka leaf evaluation
+    def leaf_evaluation(self):
         """ Perform a rollout
         Random simulation until termination
         Return end state, z """
