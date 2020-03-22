@@ -70,7 +70,7 @@ class OldGold(Game):
         coin_type = "copper" if prev_state[start] == 1 else "gold"
         if start == end == 0:
             print(
-                "Player {} picks up {} coin:\t\t\t{}".format(
+                "Player {} picks up {} coin:\t\t\t\t{}".format(
                     self.player, coin_type, state
                 )
             )

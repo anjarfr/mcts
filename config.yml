@@ -9,7 +9,7 @@ nim:
   k: 3 # maximum number of pieces that either player can take on their turn (min 1)
 
 oldgold:
-  b_init: [0, 1, 1, 2, 1, 0, 0] # initial board configuration
+  b_init: [0, 1, 1, 2, 1] # initial board configuration
 
 verbose: True # Whether the details of moves for each game is shown
 
