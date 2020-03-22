@@ -42,9 +42,10 @@ class MCTS:
             self.current_node = self.root
             self.simulate()
 
+        self.game.set_player(player)
         the_chosen_one = self.select_move(self.root, c=0)
 
-        #self.root.print_tree()
+        # self.root.print_tree()
 
         self.root = the_chosen_one
         return the_chosen_one.action
