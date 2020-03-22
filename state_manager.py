@@ -73,7 +73,7 @@ class StateManager:
                 action = self.mcts.uct_search(self.game.player)
                 self.state = self.game.perform_action(self.state, action)
 
-                self.mcts.reset(deepcopy(self.state))
+                self.mcts.reset(deepcopy(self.state))   # Usikker på om dette er nødvendig..
 
             # Update statistics
             self.update_statistics()
