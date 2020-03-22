@@ -44,6 +44,8 @@ class MCTS:
 
         the_chosen_one = self.select_move(self.root, c=0)
 
+        #self.root.print_tree()
+
         self.root = the_chosen_one
         return the_chosen_one.action
 

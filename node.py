@@ -67,19 +67,19 @@ class Node:
     #             s += child.print_tree()
     #     return s
 
-    # def print_tree(self):
-    #     children = self.children
-    #
-    #     print("Root:", "state", self.state, "t", self.t, "visits", self.visits, "q", self.q)
-    #
-    #     while len(children):
-    #         temp_children = []
-    #         for _ in children:
-    #             child = children.pop(0)
-    #             print("Child: ", "state ", child.state, "parent", child.parent.state, "t ", child.t, "visits ", child.visits, "q ", child.q)
-    #             for temp_child in child.children:
-    #                 temp_children.append(temp_child)
-    #
-    #         for child in temp_children:
-    #             children.append(child)
+    def print_tree(self):
+        children = list(self.children.values())
+
+        print("Root:", "state", self.state, "Avg wins", self.avg_wins, "visits", self.visits)
+
+        while len(children):
+            temp_children = []
+            for _ in children:
+                child = children.pop(0)
+                print("Child: ", "state ", child.state, "parent", child.parent.state, "Avg wins ", child.avg_wins, "visits ", child.visits)
+                for temp_child in list(child.children.values()):
+                    temp_children.append(temp_child)
+
+            for child in temp_children:
+                children.append(child)
 
