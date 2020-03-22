@@ -18,16 +18,15 @@ class MCTS:
         self.c = cfg["mcts"]["c"]
 
     def create_root_node(self, init_state):
-        """ Initialize q and N(s,a) for the root node. Expand the node """
+        """ Initialize the root node."""
         node = Node(state=init_state, parent=None, action=None)
-        # self.expand_node(node)
         return node
 
+    # Unused, use insert instead, maybe rename insert to expand in Node?
     def expand_node(self, node: Node):  # aka node expansion
         """ Find the node's children and which actions lead to them
         The insert the child and add to node's children list """
 
-        node.expanded = True
         child_states = self.game.generate_child_states(node.state)
         for sap in child_states:
             state = sap[0]
@@ -35,9 +34,8 @@ class MCTS:
             node.insert(state, action)
 
     def uct_search(self, player):
-        """ This is one move by one player in the game
-        Return the child with highest visit count as action """
-        """ Sets previous root as parent """
+        """ Simulations for one move by one player in the game
+        Return the child with highest score as action """
 
         for i in range(self.simulations):
             self.game.set_player(player)
@@ -50,21 +48,22 @@ class MCTS:
         return the_chosen_one.action
 
     def simulate(self):
-        """ Do a simulation from a leaf node and update its
+        """ Use tree search to find current simulation root
+        Do a simulation from this root and update it and its parent's
         value based on the finite state, z, from rollout """
 
-        path = self.sim_tree()  # Her
+        path = self.sim_tree()
         z = self.sim_default()
         self.backpropagate(path, z)
 
     def fully_expanded(self, node: Node):
+        """
+        Returns whether the current node has expanded all its possible children
+        """
         actions = len(self.game.get_legal_actions(node.state))
         children = len(node.children)
 
         expanded = actions == children
-        if expanded:
-            node.expanded = True
-
         return expanded
 
     def sim_tree(self):  # aka tree search
@@ -76,11 +75,12 @@ class MCTS:
 
         while not self.game.game_over(state):
 
+            # If the children of the current node have not been added to the tree
             if not self.fully_expanded(self.current_node):
 
+                # Find out which children have not been visited
                 child_states = self.game.generate_child_states(self.current_node.state)
                 existing_child_actions = list(self.current_node.children.keys())
-
                 missing_child_actions = []
 
                 for sap in child_states:
@@ -89,11 +89,11 @@ class MCTS:
                         state = sap[0]
                         missing_child_actions.append((state, action))
 
+                # Choose randomly between unvisited children
                 chosen = random.choice(missing_child_actions)
-                self.current_node.insert(chosen[0], chosen[1])
+                self.current_node.insert(chosen[0], chosen[1])  # Here we expand with only this chosen child
                 self.current_node = self.current_node.children[chosen[1]]
                 state = self.current_node.state
-
                 path.append(self.current_node)
 
                 if not self.game.game_over(state):
@@ -101,6 +101,7 @@ class MCTS:
 
                 return path
 
+            # If all children have been visited already, go deeper into the tree
             else:
                 self.current_node = self.select_move(self.current_node, self.c)
                 path.append(self.current_node)
@@ -112,12 +113,11 @@ class MCTS:
         return path
 
     def select_move(self, node: Node, c: int):
-        """ Returns the child of input node with the best Q + u value """
+        """ Returns the child of input node with the best Q + U value """
 
         legal = node.actions
         chosen_key = random.choice(list(node.children.keys()))
         chosen = node.children[chosen_key]
-
         best_value = chosen.Q() + chosen.U(c)
 
         if self.game.player == 1:
@@ -163,13 +163,12 @@ class MCTS:
 
     def backpropagate(self, path: list, z: int):
         """
-        Update Q values in the path taken based on reward, z
-        Also update the number of visits for nodes and branches in the path
+        Update visits and average wins
         """
 
         for node in path:
             node.visits += 1
-            node.t += z
+            node.avg_wins += z
 
     def reset(self, init_state):
         self.root = self.create_root_node(init_state)

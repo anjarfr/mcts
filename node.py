@@ -10,25 +10,23 @@ class Node:
         :state:         The game state in this node. Can be any type
         :parent:        Parent Node of type Node
         :action:        The action leading from the parent to this node
-        :children:      List of Nodes generated from this node
+        :children:      Dict with {'action': child_node} generated from this node
         :actions:       List of actions (any type) that can be taken from this node
-        :q:             Dictionary with {'action': q(s,a)} where s is self.state
         :visits:        Integer N(s). Number of times this node has been visited
+        :t:             Integer, average total wins of games including this node
         """
 
         self.state = state
         self.parent = parent
         self.action = action
 
-        self.expanded = False
         self.children = {}
         self.actions = []
-        self.q = {}
         self.visits = 0
-        self.t = 0
+        self.avg_wins = 0
 
     def Q(self):
-        return self.t / (1 + self.visits)
+        return self.avg_wins / self.visits
 
     def U(self, c: int):
         """ Exploration bonus """
@@ -37,9 +35,7 @@ class Node:
         return c * sqrt(log(self.parent.visits)/self.visits)
 
     def insert(self, child_state, action_to_child):
-        """ Insert a new node into the tree. Updates the child's q and N(s,a)
-        values. Appends all legal actions the child can take but no resulting
-        state """
+        """ Insert a new child node into the tree. Add action to parent """
         child = Node(state=child_state, parent=self, action=action_to_child)
         self.actions.append(action_to_child)
         self.children[action_to_child] = child
@@ -71,19 +67,19 @@ class Node:
     #             s += child.print_tree()
     #     return s
 
-    def print_tree(self):
-        children = self.children
-
-        print("Root:", "state", self.state, "t", self.t, "visits", self.visits, "q", self.q)
-
-        while len(children):
-            temp_children = []
-            for _ in children:
-                child = children.pop(0)
-                print("Child: ", "state ", child.state, "parent", child.parent.state, "t ", child.t, "visits ", child.visits, "q ", child.q)
-                for temp_child in child.children:
-                    temp_children.append(temp_child)
-
-            for child in temp_children:
-                children.append(child)
+    # def print_tree(self):
+    #     children = self.children
+    #
+    #     print("Root:", "state", self.state, "t", self.t, "visits", self.visits, "q", self.q)
+    #
+    #     while len(children):
+    #         temp_children = []
+    #         for _ in children:
+    #             child = children.pop(0)
+    #             print("Child: ", "state ", child.state, "parent", child.parent.state, "t ", child.t, "visits ", child.visits, "q ", child.q)
+    #             for temp_child in child.children:
+    #                 temp_children.append(temp_child)
+    #
+    #         for child in temp_children:
+    #             children.append(child)
 
