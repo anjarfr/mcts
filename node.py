@@ -40,36 +40,8 @@ class Node:
         self.actions.append(action_to_child)
         self.children[action_to_child] = child
 
-    def get_node_by_state(self, state):
-        if self.state == state:
-            return self
-        if len(self.children):
-            for child in self.children:
-                return self.get_node_by_state(child)
-        return None
-
-    def get_child_by_state(self, state):
-        for child in self.children:
-            if child.state == state:
-                return child
-        return None
-
-    def get_action_to(self, chosen_child):
-        for i, child in enumerate(self.children):
-            if child.state == chosen_child.state:
-                return self.actions[i]
-
-    # def print_tree(self):
-    #     s = ''
-    #     s += '{} {}'.format(self.state, self.action) + '\n'
-    #     if len(self.children):
-    #         for child in self.children:
-    #             s += child.print_tree()
-    #     return s
-
     def print_tree(self):
         children = list(self.children.values())
-
         print("Root:", "state", self.state, "Avg wins", self.avg_wins, "visits", self.visits)
 
         while len(children):

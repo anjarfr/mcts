@@ -32,9 +32,6 @@ class Nim(Game):
             child_states.append((state - action, action))
         return child_states
 
-    def get_action(self, start_state, end_state):
-        return start_state - end_state
-
     def get_legal_actions(self, state):
         limit = min(state, self.max_remove_stones)
         actions = list(range(1, limit + 1))

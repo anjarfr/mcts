@@ -3,10 +3,10 @@ from copy import deepcopy
 
 
 class OldGold(Game):
-    def __init__(self, cfg: object, verbose):
+    def __init__(self, cfg, verbose):
         super().__init__(cfg, verbose)
 
-    def generate_initial_state(self, cfg: object):
+    def generate_initial_state(self, cfg):
         state = cfg["oldgold"]["b_init"]
         if state.count(2) != 1:
             raise Exception(
@@ -22,7 +22,7 @@ class OldGold(Game):
             actions.append((0, 0))
         for i in range(len(state)):
             if state[i] == 0:
-                for j in range(i+1, len(state)):
+                for j in range(i + 1, len(state)):
                     if state[j] != 0:
                         actions.append((j, i))
                         break
@@ -70,7 +70,7 @@ class OldGold(Game):
         coin_type = "copper" if prev_state[start] == 1 else "gold"
         if start == end == 0:
             print(
-                "Player {} picks up {} coin:\t\t\t\t{}".format(
+                "Player {} picks up {} coin:\t\t\t{}".format(
                     self.player, coin_type, state
                 )
             )
